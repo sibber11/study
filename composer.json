@@ -12,6 +12,8 @@
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",
+        "protonemedia/inertiajs-tables-laravel-query-builder": "^2.2",
+        "spatie/laravel-query-builder": "^5.2",
         "tightenco/ziggy": "^1.0"
     },
     "require-dev": {
