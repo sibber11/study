@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Course;
 use App\Http\Requests\StoreCourseRequest;
 use App\Http\Requests\UpdateCourseRequest;
+use Inertia\Inertia;
+use ProtoneMedia\LaravelQueryBuilderInertiaJs\InertiaTable;
 
 class CourseController extends Controller
 {
@@ -13,7 +15,12 @@ class CourseController extends Controller
      */
     public function index()
     {
-        //
+        $courses = Course::paginate(10);
+
+        return Inertia::render('Model/Chapter/Index', ['chapters'=>$courses])->table(function(InertiaTable $table){
+            $table->column('id',canBeHidden:false);
+            $table->column('name', canBeHidden:false);
+        });
     }
 
     /**
