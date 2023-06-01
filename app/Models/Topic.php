@@ -7,5 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Topic extends Model
 {
-    use HasFactory;
+    public $timestamps = false;
+    protected $fillable = [
+        'name',
+        'chapter_id',
+    ];
+
+    public function chapter()
+    {
+        return $this->belongsTo(Chapter::class);
+    }
 }

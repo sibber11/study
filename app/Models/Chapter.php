@@ -2,10 +2,25 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Chapter extends Model
 {
-    use HasFactory;
+    public $timestamps = false;
+    protected $fillable = [
+        'name',
+        'course_id',
+    ];
+
+    public function courses()
+    {
+        return $this->belongsTo(Course::class);
+    }
+
+    public function questions()
+    {
+        return $this->hasMany(Question::class);
+    }
 }

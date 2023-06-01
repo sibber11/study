@@ -7,5 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Question extends Model
 {
-    use HasFactory;
+    public $timestamps = false;
+    protected $fillable = [
+        'question',
+        'answer',
+        'topic_id'
+    ];
+
+    public function topic()
+    {
+        return $this->belongsTo(Topic::class);
+    }
 }
