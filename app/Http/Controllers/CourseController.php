@@ -17,7 +17,7 @@ class CourseController extends Controller
     {
         $courses = Course::paginate(10);
 
-        return Inertia::render('Model/Chapter/Index', ['chapters'=>$courses])->table(function(InertiaTable $table){
+        return Inertia::render('Model/Course/Index', ['chapters'=>$courses])->table(function(InertiaTable $table){
             $table->column('id',canBeHidden:false);
             $table->column('name', canBeHidden:false);
         });
