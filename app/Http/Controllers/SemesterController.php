@@ -17,8 +17,8 @@ class SemesterController extends Controller
     {
         $semesters = Semester::paginate(10);
         return Inertia::render('Model/Semester/Index', ['semesters' => $semesters])->table(function(InertiaTable $table){
-            $table->column('id');
-            $table->column('name');
+            $table->column('id', canBeHidden:false);
+            $table->column('name', canBeHidden:false);
         });
     }
 
