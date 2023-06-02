@@ -14,7 +14,7 @@ class Chapter extends Model
         'course_id',
     ];
 
-    public function courses()
+    public function course()
     {
         return $this->belongsTo(Course::class);
     }
