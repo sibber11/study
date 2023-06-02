@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\ChapterController;
 use App\Http\Controllers\CourseController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SemesterController;
+use App\Http\Controllers\TopicController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,7 +30,9 @@ Route::get('/', function () {
 });
 
 Route::resource('semester', SemesterController::class);
-Route::resource('chapter', CourseController::class);
+Route::resource('course', CourseController::class);
+Route::resource('chapter', ChapterController::class);
+Route::resource('topic', TopicController::class);
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
