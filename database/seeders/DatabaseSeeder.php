@@ -29,15 +29,18 @@ class DatabaseSeeder extends Seeder
         ],
         [
             'name' => 'Data and Telecommunications',
-            'code' => 'DT'
+            'code' => 'DT',
+            'chapters' => []
         ],
         [
             'name' => 'Operating System',
-            'code' => 'OS'
+            'code' => 'OS',
+            'chapters' => []
         ],
         [
             'name' => 'Economics',
-            'code' => 'ECO'
+            'code' => 'ECO',
+            'chapters' => []
         ],
     ];
     /**
@@ -57,15 +60,16 @@ class DatabaseSeeder extends Seeder
         ]);
 
         foreach ($this->courses as $course) {
-            $course = Course::create([
+            $courseModel = Course::create([
                 'name' => $course['name'],
                 'code' => $course['code'],
                 'semester_id' => $semester->id
             ]);
-
+            
             foreach ($course['chapters'] as $chapter) {
-                $chapter = Chapter::create([
-                    'name' => $chapter['name']
+                $chapterModel = Chapter::create([
+                    'name' => $chapter['name'],
+                    'course_id' => $courseModel->id
                 ]);
             }
         }

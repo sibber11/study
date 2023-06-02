@@ -15,12 +15,15 @@ class ChapterController extends Controller
      */
     public function index()
     {
-        $chapters = Chapter::with('course')->paginate(10);
+        $chapters = Chapter::with(['course'=>function($query){
+            $query->with('semester');
+        }])->paginate(10);
         
         return Inertia::render('Model/Chapter/Index', ['chapters'=>$chapters])->table(function(InertiaTable $table){
             $table->column('id',canBeHidden:false);
             $table->column('name', canBeHidden:false);
             $table->column('course', canBeHidden:false);
+            $table->column('semester', canBeHidden:false);            
         });
     }
 

@@ -15,11 +15,12 @@ class CourseController extends Controller
      */
     public function index()
     {
-        $courses = Course::paginate(10);
+        $courses = Course::with('semester')->paginate(10);
 
         return Inertia::render('Model/Course/Index', ['courses'=>$courses])->table(function(InertiaTable $table){
             $table->column('id',canBeHidden:false);
             $table->column('name', canBeHidden:false);
+            $table->column('semester', canBeHidden:false);
         });
     }
 

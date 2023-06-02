@@ -7,7 +7,9 @@
 <template>
     <ModelIndex title="Courses">
         <Table :resource="courses">
-        
+            <template #cell(semester)="{item:course}">
+                {{ course.semester.name }}
+            </template>
         </Table>
         </ModelIndex>
 </template>

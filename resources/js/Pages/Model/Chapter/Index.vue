@@ -10,6 +10,9 @@ defineProps(['chapters']);
             <template #cell(course)="{item:chapter}">
                 {{ chapter.course.name }}
             </template>
+            <template #cell(semester)="{item:chapter}">
+                {{ chapter.course.semester.name }}
+            </template>
          </Table>
         
     </ModelIndex>
