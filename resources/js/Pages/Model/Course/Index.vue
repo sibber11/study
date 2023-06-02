@@ -1,8 +1,13 @@
 <script setup>
     import ModelIndex from '@/Layouts/ModelIndex.vue';
-    defineProps(['chapters']);
+    import {Table} from '@protonemedia/inertiajs-tables-laravel-query-builder'
+    defineProps(['courses']);
 </script>
 
 <template>
-    <ModelIndex :models="chapters" title="Chapters"/>
+    <ModelIndex title="Courses">
+        <Table :resource="courses">
+        
+        </Table>
+        </ModelIndex>
 </template>
