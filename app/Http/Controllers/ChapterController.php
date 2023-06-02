@@ -6,6 +6,7 @@ use Inertia\Inertia;
 use App\Models\Chapter;
 use App\Http\Requests\StoreChapterRequest;
 use App\Http\Requests\UpdateChapterRequest;
+use App\Models\Course;
 use ProtoneMedia\LaravelQueryBuilderInertiaJs\InertiaTable;
 
 class ChapterController extends Controller
@@ -15,15 +16,19 @@ class ChapterController extends Controller
      */
     public function index()
     {
-        $chapters = Chapter::with(['course'=>function($query){
+        $chapters = Chapter::with(['course' => function ($query) {
             $query->with('semester');
         }])->paginate(10);
-        
-        return Inertia::render('Model/Chapter/Index', ['chapters'=>$chapters])->table(function(InertiaTable $table){
-            $table->column('id',canBeHidden:false);
-            $table->column('name', canBeHidden:false);
-            $table->column('course', canBeHidden:false);
-            $table->column('semester', canBeHidden:false);            
+
+        return Inertia::render('Model/Chapter/Index', [
+            'chapters' => $chapters,
+            'status' => session('status')
+        ])->table(function (InertiaTable $table) {
+            $table->column('id', canBeHidden: false)
+                ->column('name', canBeHidden: false)
+                ->column('course', canBeHidden: false)
+                ->column('semester', canBeHidden: false)
+                ->column('actions', canBeHidden: false);
         });
     }
 
@@ -32,7 +37,11 @@ class ChapterController extends Controller
      */
     public function create()
     {
-        //
+        $courses = Course::all();
+        return Inertia::render('Model/Chapter/Create', [
+            'courses' => $courses,
+            'status' => session('status')
+        ]);
     }
 
     /**
@@ -40,7 +49,10 @@ class ChapterController extends Controller
      */
     public function store(StoreChapterRequest $request)
     {
-        //
+        $chapter = Chapter::make();
+        $chapter->fill($request->validated());
+        $chapter->save();
+        return back()->with('status', 'chapter-stored-successfully');
     }
 
     /**
@@ -72,6 +84,7 @@ class ChapterController extends Controller
      */
     public function destroy(Chapter $chapter)
     {
-        //
+        $chapter->delete();
+        return back()->with('status', 'chapter-deleted-successfully');
     }
 }
