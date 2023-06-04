@@ -11,7 +11,7 @@ class StoreTopicRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class StoreTopicRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string|max:255',
+            'chapter_id' => 'required|exists:chapters,id',
+            'course_id' => 'required|exists:courses,id',
         ];
     }
 }

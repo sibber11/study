@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Topic;
 use App\Http\Requests\StoreTopicRequest;
 use App\Http\Requests\UpdateTopicRequest;
+use App\Models\Course;
 use Inertia\Inertia;
 use ProtoneMedia\LaravelQueryBuilderInertiaJs\InertiaTable;
 
@@ -20,13 +21,17 @@ class TopicController extends Controller
                 $query->with('semester');
             }]);
         }])->paginate(10);
+        
 
-        return Inertia::render('Model/Topic/Index', ['topics' => $topics])->table(function (InertiaTable $table) {
+        return Inertia::render('Model/Topic/Index', [
+            'topics' => $topics
+            ])->table(function (InertiaTable $table) {
             $table->column('id', canBeHidden: false)
                 ->column('name', canBeHidden: false)
                 ->column('chapter', canBeHidden: false)
                 ->column('course', canBeHidden: false)
-                ->column('semester', canBeHidden: false);
+                ->column('semester', canBeHidden: false)
+                ->column('actions', canBeHidden:false);
         });
     }
 
@@ -35,7 +40,11 @@ class TopicController extends Controller
      */
     public function create()
     {
-        //
+        $courses = Course::with('chapters')->get();
+        return Inertia::render('Model/Topic/Create', [
+            'courses' => $courses,
+            'status' => session('success'),
+        ]);
     }
 
     /**
@@ -43,7 +52,9 @@ class TopicController extends Controller
      */
     public function store(StoreTopicRequest $request)
     {
-        //
+        $topic = Topic::create($request->validated());
+
+        return back()->with('success', 'Topic created.');
     }
 
     /**
