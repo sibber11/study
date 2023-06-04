@@ -1,0 +1,51 @@
+<script setup>
+import InputError from '@/Components/InputError.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import CancelButton from '@/Components/CancelButton.vue';
+import TextInput from '@/Components/TextInput.vue';
+import { Head, useForm } from '@inertiajs/vue3';
+import { onMounted } from 'vue';
+const props = defineProps(['{{ name_lowercase }}', 'status', 'url']);
+
+const form = useForm({
+    //
+});
+
+const submit = () => {
+    form.post(props.url, {
+        // onFinish: () => form.reset(),
+    });
+};
+
+onMounted(() => {
+    if (!props.{{ name_lowercase }}) {
+        //
+    }
+});
+
+
+</script>
+
+<template>
+    <form @submit.prevent="submit">
+        <div>
+            <InputLabel for="name" value="Name" />
+
+            <TextInput id="name" type="text" class="mt-1 block w-full" v-model="form.name" required autofocus />
+
+            <InputError class="mt-2" :message="form.errors.name" />
+        </div>
+
+        <div class="flex items-center justify-end mt-4">
+            <Transition class="transition ease-in-out" enter-from-class="opacity-0" leave-to-class="opacity-0">
+                <p v-if="form.recentlySuccessful && status" class="text-sm text-gray-600">{{ status }}</p>
+            </Transition>
+            <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                Save
+            </PrimaryButton>
+
+            <CancelButton :url="route('{{ name_lowercase }}.index')"></CancelButton>
+        </div>
+    </form>
+</template>

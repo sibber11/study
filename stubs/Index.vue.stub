@@ -1,0 +1,21 @@
+<script setup >
+import ModelIndex from '@/Layouts/ModelIndex.vue';
+import {Table} from '@protonemedia/inertiajs-tables-laravel-query-builder';
+import EditButton from "@/Components/EditButton.vue";
+import DeleteButton from "@/Components/DeleteButton.vue";
+defineProps(['{{ name_lowercase }}', 'status'])
+</script>
+
+<template>
+    <ModelIndex title="{{ name_uppercase }}" :url="route('{{ name_lowercase }}.create')">
+        <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
+            {{ status }}
+        </div>
+        <Table :resource="{{ name_lowercase }}">
+            <template #cell(actions)="{ item: {{ name_lowercase }}}">
+                <EditButton :url="route('{{ name_lowercase }}.edit', {{ name_lowercase }})"/>
+                <DeleteButton :url="route('{{ name_lowercase }}.destroy', {{ name_lowercase }})"/>
+            </template>
+         </Table>
+    </ModelIndex>
+</template>

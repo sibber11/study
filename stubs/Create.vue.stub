@@ -1,0 +1,12 @@
+<script setup>
+import CreateLayout from '@/Layouts/CreateLayout.vue';
+import Fields from './Fields.vue';
+
+const props = defineProps(['{{ name_lowercase }}', 'status']);
+</script>
+
+<template>
+    <CreateLayout title="Create {{ name_uppercase }}">
+        <Fields :{{ name_lowercase }}="{{ name_lowercase }}" :status="status" :url="route('{{ name_lowercase }}.store')"/>  
+    </CreateLayout>
+</template>
