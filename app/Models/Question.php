@@ -9,13 +9,26 @@ class Question extends Model
 {
     public $timestamps = false;
     protected $fillable = [
-        'question',
-        'answer',
+        'value',
         'topic_id'
     ];
 
     public function topic()
     {
         return $this->belongsTo(Topic::class);
+    }
+
+    public function chapter(){
+        return $this->topic->chapter();
+    }
+    
+    public function course()
+    {
+        return $this->chapter->course();
+    }
+
+    public function semester()
+    {
+        return $this->course->semester(); 
     }
 }

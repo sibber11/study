@@ -18,4 +18,7 @@ import NavLink from '@/Components/NavLink.vue';
     <NavLink :href="route('topic.index')" :active="route().current('topic.*')">
         Topic
     </NavLink>
+    <NavLink :href="route('question.index')" :active="route().current('question.*')">
+        Question
+    </NavLink>
 </template>

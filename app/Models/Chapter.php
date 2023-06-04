@@ -21,6 +21,11 @@ class Chapter extends Model
 
     public function questions()
     {
-        return $this->hasMany(Question::class);
+        return $this->hasManyThrough(Question::class,Topic::class);
+    }
+    
+    public function topics()
+    {
+        return $this->hasMany(Topic::class);
     }
 }
