@@ -24,7 +24,7 @@ class TopicController extends Controller
         
 
         return Inertia::render('Model/Topic/Index', [
-            'topics' => $topics
+            'topics' => $topics,
             ])->table(function (InertiaTable $table) {
             $table->column('id', canBeHidden: false)
                 ->column('name', canBeHidden: false)
@@ -54,7 +54,7 @@ class TopicController extends Controller
     {
         $topic = Topic::create($request->validated());
 
-        return back()->with('success', 'Topic created.');
+        return back()->with('status', 'Topic created.');
     }
 
     /**
@@ -86,6 +86,13 @@ class TopicController extends Controller
      */
     public function destroy(Topic $topic)
     {
-        //
+        try{
+            $topic->delete();
+        }
+        catch(\Exception $e){
+            // return back()->with('status', 'Topic cannot be deleted.');
+            return response()->json(['status' => 'Topic cannot be deleted.'], 500);
+        }
+        return back()->with('status', 'Topic deleted.');
     }
 }
