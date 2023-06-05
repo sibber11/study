@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Inertia\Inertia;
+use App\Models\Course;
 use App\Models\Question;
+use Illuminate\Support\Facades\DB;
+use Spatie\QueryBuilder\QueryBuilder;
 use App\Http\Requests\StoreQuestionRequest;
 use App\Http\Requests\UpdateQuestionRequest;
-use App\Models\Course;
-use Inertia\Inertia;
 use ProtoneMedia\LaravelQueryBuilderInertiaJs\InertiaTable;
-use Spatie\QueryBuilder\QueryBuilder;
 
 class QuestionController extends Controller
 {
@@ -31,7 +32,8 @@ class QuestionController extends Controller
                 ->column('value')
                 ->column('topic')
                 ->column('chapter')
-                ->column('course');
+                ->column('course')
+                ->column('actions');
         });
     }
 
@@ -85,6 +87,7 @@ class QuestionController extends Controller
      */
     public function destroy(Question $question)
     {
-        //
+        $question->delete();        
+        return back()->with('success', 'Question deleted successfully');
     }
 }
