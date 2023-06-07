@@ -62,7 +62,13 @@ class TopicController extends Controller
      */
     public function show(Topic $topic)
     {
-        //
+        $topic->load('questions');
+        return Inertia::render('Model/Topic/Show', [
+            'topic' => $topic,
+        ])->table(function(InertiaTable $table){
+            $table->column('id', canBeHidden:false)
+                ->column('value', canBeHidden:false);
+        });
     }
 
     /**

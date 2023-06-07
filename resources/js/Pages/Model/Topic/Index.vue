@@ -1,8 +1,9 @@
 <script setup>
     import ModelIndex from '@/Layouts/ModelIndex.vue';
-    import {Table} from '@protonemedia/inertiajs-tables-laravel-query-builder'
+    import {Table} from '@protonemedia/inertiajs-tables-laravel-query-builder';
     import EditButton from "@/Components/EditButton.vue";
     import DeleteButton from "@/Components/DeleteButton.vue";
+    import ShowButton from '@/Components/ShowButton.vue';
     defineProps(['topics', 'status']);
 </script>
 
@@ -22,6 +23,7 @@
                 {{ topic.chapter.course.semester.name }}
             </template>
             <template #cell(actions)="{ item: topic}">
+                <ShowButton :url="route('topic.show', topic)"/>
                 <EditButton :url="route('topic.edit', topic)"/>
                 <DeleteButton :url="route('topic.destroy', topic)"/>
             </template>
