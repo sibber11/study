@@ -3,6 +3,7 @@ import ModelIndex from '@/Layouts/ModelIndex.vue';
 import {Table} from '@protonemedia/inertiajs-tables-laravel-query-builder';
 import EditButton from "@/Components/EditButton.vue";
 import DeleteButton from "@/Components/DeleteButton.vue";
+import ShowButton from '@/Components/ShowButton.vue';
 defineProps(['chapters', 'status'])
 </script>
 
@@ -19,6 +20,7 @@ defineProps(['chapters', 'status'])
                 {{ chapter.course.semester.name }}
             </template>
             <template #cell(actions)="{ item: chapter}">
+                <ShowButton :url="route('chapter.show', chapter)"/>
                 <EditButton :url="route('chapter.edit', chapter)"/>
                 <DeleteButton :url="route('chapter.destroy', chapter)"/>
             </template>

@@ -7,6 +7,8 @@ use App\Models\Chapter;
 use App\Http\Requests\StoreChapterRequest;
 use App\Http\Requests\UpdateChapterRequest;
 use App\Models\Course;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Arr;
 use ProtoneMedia\LaravelQueryBuilderInertiaJs\InertiaTable;
 
 class ChapterController extends Controller
@@ -60,7 +62,18 @@ class ChapterController extends Controller
      */
     public function show(Chapter $chapter)
     {
-        //
+        $chapter->load('topics');
+        $questions = $chapter->questions()->with('topic')->paginate();
+        // dd($questions);
+        return Inertia::render('Model/Chapter/Show', [
+            'chapter' => $chapter,
+            'questions' => $questions
+        ])->table(function(InertiaTable $table){
+            $table->column('id', canBeHidden:false)
+                ->column('value', canBeHidden:false)
+                ->column('topic', canBeHidden:false);
+
+        });
     }
 
     /**
