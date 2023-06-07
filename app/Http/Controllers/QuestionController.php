@@ -28,8 +28,8 @@ class QuestionController extends Controller
             'questions' => $questions,
             'status' => session('success')
         ])->table(function(InertiaTable $table){
-            $table->column('id')
-                ->column('value')
+            $table->column('id', canBeHidden:false)
+                ->column('value', canBeHidden:false)
                 ->column('topic')
                 ->column('chapter')
                 ->column('course')

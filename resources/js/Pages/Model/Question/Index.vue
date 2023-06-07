@@ -19,7 +19,7 @@ defineProps(['questions', 'status'])
                 {{ question.topic.chapter.name }}
             </template>
             <template #cell(course)="{item:question}">
-                {{ question.topic.chapter.course.name }}
+                {{ question.topic.chapter.course.code }}
             </template>
             <template #cell(actions)="{ item: question}">
                 <EditButton :url="route('question.edit', question)"/>
