@@ -7,28 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class Question extends Model
 {
+    use HasFactory;
     public $timestamps = false;
     protected $fillable = [
-        'value',
+        'title',
+        'difficulty',
+        'read_time',
+        'star',
         'topic_id'
     ];
 
     public function topic()
     {
         return $this->belongsTo(Topic::class);
-    }
-
-    public function chapter(){
-        return $this->topic->chapter();
-    }
-    
-    public function course()
-    {
-        return $this->chapter->course();
-    }
-
-    public function semester()
-    {
-        return $this->course->semester(); 
     }
 }
