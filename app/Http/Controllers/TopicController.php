@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Topic;
 use App\Http\Requests\StoreTopicRequest;
 use App\Http\Requests\UpdateTopicRequest;
-use App\Models\Course;
+use App\Http\Resources\TopicResource;
+use App\Models\Topic;
 use Inertia\Inertia;
 use ProtoneMedia\LaravelQueryBuilderInertiaJs\InertiaTable;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class TopicController extends Controller
 {
@@ -16,22 +17,24 @@ class TopicController extends Controller
      */
     public function index()
     {
-        $topics = Topic::with(['chapter' => function ($query) {
-            $query->with(['course' => function ($query) {
-                $query->with('semester');
-            }]);
-        }])->paginate(10);
-        
+        $topics = QueryBuilder::for(Topic::class)
+            ->defaultSort('id')
+            ->allowedSorts(['id'])
+            ->topic()
+            ->paginate(9)
+            ->withQueryString();
 
+        $topics = TopicResource::collection($topics);
         return Inertia::render('Model/Topic/Index', [
             'topics' => $topics,
-            ])->table(function (InertiaTable $table) {
-            $table->column('id', canBeHidden: false)
+        ])->table(function (InertiaTable $table) {
+            $table->defaultSort('id')
+                ->column('id', canBeHidden: false, sortable: true)
                 ->column('name', canBeHidden: false)
                 ->column('chapter', canBeHidden: false)
                 ->column('course', canBeHidden: false)
                 ->column('semester', canBeHidden: false)
-                ->column('actions', canBeHidden:false);
+                ->column('actions', canBeHidden: false);
         });
     }
 
@@ -40,10 +43,12 @@ class TopicController extends Controller
      */
     public function create()
     {
-        $courses = Course::with('chapters')->get();
+        $courses = Topic::whereNot('type', Topic::TYPE_TOPIC)->get()->toTree();
+//        dd($courses->toArray());
         return Inertia::render('Model/Topic/Create', [
             'courses' => $courses,
-            'status' => session('success'),
+            'types' => Topic::TYPES,
+            'status' => session('status'),
         ]);
     }
 
@@ -52,7 +57,28 @@ class TopicController extends Controller
      */
     public function store(StoreTopicRequest $request)
     {
+        $type = $request->input('type');
+
+        switch ($type) {
+            case Topic::TYPE_TOPIC:
+                $parent = Topic::chapter()->whereId($request->input('chapter_id'))->first();
+                break;
+            case Topic::TYPE_CHAPTER:
+                $parent = Topic::course()->whereId($request->input('course_id'))->first();
+                break;
+            case Topic::TYPE_COURSE:
+                $parent = Topic::semester()->whereId($request->input('semester_id'))->first();
+                break;
+            case Topic::TYPE_SEMESTER:
+                $parent = null;
+                break;
+            default:
+                $parent = null;
+        }
         $topic = Topic::create($request->validated());
+        if (!is_null($parent)) {
+            $parent->appendNode($topic);
+        }
 
         return back()->with('status', 'Topic created.');
     }
@@ -65,9 +91,9 @@ class TopicController extends Controller
         $topic->load('questions');
         return Inertia::render('Model/Topic/Show', [
             'topic' => $topic,
-        ])->table(function(InertiaTable $table){
-            $table->column('id', canBeHidden:false)
-                ->column('value', canBeHidden:false);
+        ])->table(function (InertiaTable $table) {
+            $table->column('id', canBeHidden: false)
+                ->column('value', canBeHidden: false);
         });
     }
 
@@ -92,10 +118,9 @@ class TopicController extends Controller
      */
     public function destroy(Topic $topic)
     {
-        try{
+        try {
             $topic->delete();
-        }
-        catch(\Exception $e){
+        } catch (\Exception $e) {
             // return back()->with('status', 'Topic cannot be deleted.');
             return response()->json(['status' => 'Topic cannot be deleted.'], 500);
         }
