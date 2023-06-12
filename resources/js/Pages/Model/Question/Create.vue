@@ -2,11 +2,11 @@
 import CreateLayout from '@/Layouts/CreateLayout.vue';
 import Fields from './Fields.vue';
 
-const props = defineProps(['courses', 'status']);
+const props = defineProps(['semesters', 'status']);
 </script>
 
 <template>
     <CreateLayout title="Create Question">
-        <Fields :courses="courses" :status="status" :url="route('question.store')"/>  
+        <Fields :semesters="semesters" :status="status" :url="route('questions.store')"/>
     </CreateLayout>
 </template>

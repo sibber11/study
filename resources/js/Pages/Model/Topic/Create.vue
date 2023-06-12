@@ -2,11 +2,11 @@
 import CreateLayout from '@/Layouts/CreateLayout.vue';
 import Fields from './Fields.vue';
 
-const props = defineProps(['courses', 'status']);
+const props = defineProps(['courses', 'types', 'status']);
 </script>
 
 <template>
     <CreateLayout title="Create Topic">
-        <Fields :courses="courses" :status="status" :url="route('topic.store')"/>        
+        <Fields :semesters="courses" :status="status" :types="types" :url="route('topics.store')"/>
     </CreateLayout>
 </template>
