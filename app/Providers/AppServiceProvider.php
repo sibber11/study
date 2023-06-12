@@ -21,7 +21,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $user = User::first();
-        Auth::login($user);
+        if ($this->app->runningUnitTests()) {
+            Auth::login(User::factory()->create());
+        }else{
+            if (!Auth::check()) {
+                $user = User::first();
+                if (!$user) {
+                    $user = User::factory()->create();
+                }
+                Auth::login($user);
+            }
+        }
     }
 }
