@@ -22,11 +22,11 @@ class StoreQuestionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'value' => 'required|string|max:255',
-            'topic_id' => 'required|integer|exists:topics,id',
-            'chapter_id' => 'required|integer|exists:chapters,id',
-            'course_id' => 'required|integer|exists:courses,id',
-            'semester_id' => 'nullable|integer|exists:semesters,id',
+            'title' => 'required|string|max:255',
+            'topic_id' => 'required|exists:topics,id',
+            'chapter_id' => 'required|exists:topics,id',
+            'course_id' => 'required|exists:topics,id',
+            'semester_id' => 'required|exists:topics,id',
         ];
     }
 }

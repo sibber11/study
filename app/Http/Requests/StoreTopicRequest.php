@@ -21,10 +21,14 @@ class StoreTopicRequest extends FormRequest
      */
     public function rules(): array
     {
+
+
         return [
             'name' => 'required|string|max:255',
-            'chapter_id' => 'required|exists:chapters,id',
-            'course_id' => 'required|exists:courses,id',
+            'type' => 'required|string|in:topic,chapter,course,semester',
+            'semester_id' => 'nullable|required_if:type,course|exists:topics,id',
+            'course_id' => 'nullable|required_if:type,chapter|exists:topics,id',
+            'chapter_id' => 'nullable|required_if:type,topic|exists:topics,id',
         ];
     }
 }
