@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Question;
 use App\Models\Topic;
+use App\Models\Year;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -23,5 +24,12 @@ class QuestionFactory extends Factory
             'title' => fake()->sentence(5),
             'topic_id' => $topic->id,
         ];
+    }
+
+    public function configure()
+    {
+        return $this->afterCreating(function (Question $question) {
+            $question->years()->attach(Year::inRandomOrder()->limit(fake()->numberBetween(0,8))->get());
+        });
     }
 }
