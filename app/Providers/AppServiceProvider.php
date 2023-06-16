@@ -23,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
     {
         if ($this->app->runningUnitTests()) {
             Auth::login(User::factory()->create());
-        }else{
+        }else if (!$this->app->runningInConsole()) {
             if (!Auth::check()) {
                 $user = User::first();
                 if (!$user) {
