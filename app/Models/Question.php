@@ -21,4 +21,9 @@ class Question extends Model
     {
         return $this->belongsTo(Topic::class);
     }
+
+    public function years()
+    {
+        return $this->belongsToMany(Year::class)->orderBy('no');
+    }
 }

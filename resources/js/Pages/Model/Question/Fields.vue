@@ -4,16 +4,18 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import CancelButton from '@/Components/CancelButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { useForm } from '@inertiajs/vue3';
-import { computed } from 'vue';
-const props = defineProps(['semesters', 'status', 'url']);
+import {useForm} from '@inertiajs/vue3';
+import {computed} from 'vue';
+
+const props = defineProps(['semesters', 'status', 'url', 'years']);
 
 const form = useForm({
     title: '',
     topic_id: '',
     chapter_id: '',
     course_id: '',
-    semester_id: ''
+    semester_id: '',
+    years: [],
 });
 
 const submit = () => {
@@ -28,21 +30,21 @@ const submit = () => {
 //     }
 // });
 
-const courses = computed(()=>{
+const courses = computed(() => {
     if (form.semester_id === '') {
         return [];
     }
     return props.semesters.find(semester => semester.id === form.semester_id).children;
 });
 
-const chapters = computed(()=>{
+const chapters = computed(() => {
     if (form.course_id === '') {
         return [];
     }
     return courses.value.find(course => course.id === form.course_id).children;
 });
 
-const topics = computed(()=>{
+const topics = computed(() => {
     if (form.chapter_id === '') {
         return [];
     }
@@ -54,62 +56,81 @@ const topics = computed(()=>{
 <template>
     <form @submit.prevent="submit">
         <div>
-            <InputLabel for="title" title="Questions" />
+            <InputLabel for="title" title="Questions"/>
 
-            <TextInput id="title" type="text" class="mt-1 block w-full" v-model="form.title" required autofocus />
+            <TextInput id="title" v-model="form.title" autofocus class="mt-1 block w-full" required type="text"/>
 
-            <InputError class="mt-2" :message="form.errors.title" />
+            <InputError :message="form.errors.title" class="mt-2"/>
         </div>
 
         <div class="mt-4">
-            <InputLabel for="semester_id" value="Semester" />
+            <InputLabel for="semester_id" value="Semester"/>
 
-            <select v-model="form.semester_id" id="semester_id" @input="form.chapter_id=''"
-                    class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
+            <select id="semester_id" v-model="form.semester_id" class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                    @input="form.chapter_id=''">
                 <option v-for="semester in semesters" :value="semester.id" class="">{{ semester.name }}</option>
             </select>
 
-            <InputError class="mt-2" :message="form.errors.chapter_id" />
+            <InputError :message="form.errors.chapter_id" class="mt-2"/>
         </div>
 
         <div class="mt-4">
-            <InputLabel for="course_id" value="Course" />
+            <InputLabel for="course_id" value="Course"/>
 
-            <select v-model="form.course_id" id="course_id" @input="form.chapter_id=''"
-                class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
+            <select id="course_id" v-model="form.course_id" class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                    @input="form.chapter_id=''">
                 <option v-for="course in courses" :value="course.id" class="">{{ course.name }}</option>
             </select>
 
-            <InputError class="mt-2" :message="form.errors.chapter_id" />
+            <InputError :message="form.errors.chapter_id" class="mt-2"/>
         </div>
 
         <div class="mt-4">
-            <InputLabel for="chapter_id" value="Chapter" />
+            <InputLabel for="chapter_id" value="Chapter"/>
 
-            <select v-model="form.chapter_id" id="chapter_id" :disabled="!form.course_id" @input="form.topic_id=''"
-                class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
+            <select id="chapter_id" v-model="form.chapter_id" :disabled="!form.course_id" class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                    @input="form.topic_id=''">
                 <option v-for="chapter in chapters" :value="chapter.id" class="">{{ chapter.name }}</option>
             </select>
 
-            <InputError class="mt-2" :message="form.errors.chapter_id" />
+            <InputError :message="form.errors.chapter_id" class="mt-2"/>
         </div>
 
         <div class="mt-4">
-            <InputLabel for="topic_id" value="Topic" />
+            <InputLabel for="topic_id" value="Topic"/>
 
-            <select v-model="form.topic_id" id="topic_id" :disabled="!form.chapter_id"
-                class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
+            <select id="topic_id" v-model="form.topic_id" :disabled="!form.chapter_id"
+                    class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
                 <option v-for="topic in topics" :value="topic.id" class="">{{ topic.name }}</option>
             </select>
 
-            <InputError class="mt-2" :message="form.errors.topic_id" />
+            <InputError :message="form.errors.topic_id" class="mt-2"/>
+        </div>
+
+        <div class="mt-4">
+            <InputLabel for="years_id" value="Years"/>
+            <!--            <select v-model="form.years" id="years_id" multiple-->
+            <!--                    class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">-->
+            <!--                <option v-for="year in years" :value="year.id" class="">{{ year.no }}</option>-->
+            <!--            </select>-->
+
+            <div class="flex gap-4 flex-wrap justify-start">
+                <span v-for="year in years" :key="year.no">
+                    <input :id="year.no" type="checkbox" :name="year.no" v-model="form.years" :value="year.id">
+                    <label :for="year.no" class="inline-flex items-center">
+                        <span class="ml-2 text-sm text-gray-300">{{ year.no }}</span>
+                    </label>
+                </span>
+            </div>
+
+            <InputError :message="form.errors.years_id" class="mt-2"/>
         </div>
 
         <div class="flex items-center justify-end mt-4">
             <Transition class="transition ease-in-out" enter-from-class="opacity-0" leave-to-class="opacity-0">
                 <p v-if="form.recentlySuccessful && status" class="text-sm text-gray-600">{{ status }}</p>
             </Transition>
-            <PrimaryButton class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+            <PrimaryButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing" class="ml-4">
                 Save
             </PrimaryButton>
 

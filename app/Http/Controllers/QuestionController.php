@@ -8,6 +8,7 @@ use App\Http\Resources\QuestionResource;
 use App\Http\Resources\TopicResource;
 use App\Models\Question;
 use App\Models\Topic;
+use App\Models\Year;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Inertia\Inertia;
@@ -22,58 +23,24 @@ class QuestionController extends Controller
      */
     public function index()
     {
-        // global search
-        $globalSearch = AllowedFilter::callback('global', function ($query, $value) {
-            $query->where(function ($query) use ($value) {
-                Collection::wrap($value)->each(function ($value) use ($query) {
-                    /** @var Builder $query */
-                    $query
-                        // look for questions with the given value in their title
-                        ->orWhere('title', 'LIKE', "%{$value}%")
-                        // look for questions with the given value in their topic name
-                        ->orWhereHas('topic', function ($query) use ($value) {
-                            $query->where('name', 'LIKE', "%{$value}%");
-                        })
-                        // look for questions with the given value in their topic's parent name
-                        ->orWhereHas('topic.parent', function ($query) use ($value) {
-                            $query->where('name', 'LIKE', "%{$value}%");
-                        });
-                });
-            });
-        });
-
-
-        $questions = QueryBuilder::for(Question::class)
-            // join the topics table, so we can filter by topic name
-            ->join('topics', 'topics.id', 'questions.topic_id')
-            // join the topics table again, so we can filter by chapter name
-            ->join('topics as chapters', 'chapters.id', 'topics.parent_id')
-            ->allowedFilters([
-                'title',
-                $globalSearch,
-                // filter by topic id
-                AllowedFilter::exact('topics.id', null, false),
-                // filter by chapter id
-                AllowedFilter::exact('chapters.id', null, false)
-            ])
-            // eager load the topic and its ancestors
-            ->with(['topic.ancestors'])
-            ->paginate(8)
-            ->withQueryString();
-
+        $questions = $this->getQuestions();
         $questions = QuestionResource::collection($questions);
         return Inertia::render('Model/Question/Index', [
             'questions' => $questions,
             'status' => session('success')
         ])->table(function (InertiaTable $table) {
-            $topics = Topic::topic()->get()->pluck('name', 'id')->toArray();
-            $chapters = Topic::chapter()->get()->pluck('name', 'id')->toArray();
+            $topics = Topic::topic()->whereParentId(request()->input('course_id'))->get()->pluck('name', 'id')->toArray();
+            $chapters = Topic::chapter()->whereParentId(request()->input('course_id'))->get()->pluck('name', 'id')->toArray();
+            $courses = Topic::course()->get()->pluck('name', 'id')->toArray();
+            $years = Year::all()->pluck('no', 'id')->toArray();
             $table
-                ->defaultSort('id')
-                ->selectFilter('topics.id', $topics, 'Topic')
-                ->selectFilter('chapters.id', $chapters, 'Chapter')
+                ->selectFilter('course_id', $courses, 'Course')
+                ->selectFilter('chapter_id', $chapters, 'Chapter')
+                ->selectFilter('topic_id', $topics, 'Topic')
+                ->selectFilter('year_id', $years, 'Year')
                 ->column('id', canBeHidden: false)
                 ->column('title', canBeHidden: false)
+                ->column('years')
                 ->column('topic')
                 ->column('chapter')
                 ->column('course')
@@ -88,8 +55,10 @@ class QuestionController extends Controller
     public function create()
     {
         $semesters = Topic::with('children')->get()->toTree();
+        $years = Year::all();
         return Inertia::render('Model/Question/Create', [
             'semesters' => $semesters,
+            'years' => $years,
             'status' => session('success')
         ]);
     }
@@ -100,6 +69,8 @@ class QuestionController extends Controller
     public function store(StoreQuestionRequest $request)
     {
         $question = Question::create($request->validated());
+        $years = $request->input('years');
+        $question->years()->attach($years);
         return back()->with('success', 'Question created successfully');
     }
 
@@ -132,7 +103,61 @@ class QuestionController extends Controller
      */
     public function destroy(Question $question)
     {
+        $question->years()->detach();
         $question->delete();
         return back()->with('success', 'Question deleted successfully');
+    }
+
+    /**
+     * @return AllowedFilter
+     */
+    public function getGlobalSearchFilter(): AllowedFilter
+    {
+        return AllowedFilter::callback('global', function ($query, $value) {
+            $query->where(function ($query) use ($value) {
+                Collection::wrap($value)->each(function ($value) use ($query) {
+                    /** @var Builder $query */
+                    $query
+                        // look for questions with the given value in their title
+                        ->orWhere('title', 'LIKE', "%{$value}%")
+                        // look for questions with the given value in their topic name
+                        ->orWhereHas('topic', function ($query) use ($value) {
+                            $query->where('name', 'LIKE', "%{$value}%");
+                        })
+                        // look for questions with the given value in their topic's parent name
+                        ->orWhereHas('topic.parent', function ($query) use ($value) {
+                            $query->where('name', 'LIKE', "%{$value}%");
+                        });
+                });
+            });
+        });
+    }
+
+    /**
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
+    public function getQuestions(): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    {
+        return QueryBuilder::for(Question::class)
+            ->allowedFilters([
+                'title',
+                $this->getGlobalSearchFilter(),
+                // filter by topic id
+                AllowedFilter::exact('topic_id'),
+                AllowedFilter::callback('chapter_id', function ($query, $value) {
+                    $query->whereHas('topic', function ($query) use ($value) {
+                        $query->where('parent_id', $value);
+                    });
+                }),
+                AllowedFilter::callback('years', function ($query, $value) {
+                    $query->whereHas('years', function ($query) use ($value) {
+                        $query->where('id', $value);
+                    });
+                }),
+            ])
+            // eager load the topic and its ancestors
+            ->with(['topic.ancestors'])
+            ->paginate(8)
+            ->withQueryString();
     }
 }

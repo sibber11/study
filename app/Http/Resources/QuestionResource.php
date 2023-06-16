@@ -18,15 +18,16 @@ class QuestionResource extends JsonResource
 //        dd($this);
         $course = $chapter->parent;
         $semester = $course->parent;
-
         $attributes = [
             'id' => $this->id,
             'title' => $this->title,
             'topic' => $this->topic->name,
             'chapter' => $chapter->name,
             'course' => $course->code,
-            'semester' => $semester->name
+            'semester' => $semester->name,
+            'years' => $this->years->implode('no', ', '),
         ];
         return $attributes;
     }
 }
+

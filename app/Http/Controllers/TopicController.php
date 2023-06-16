@@ -39,10 +39,10 @@ class TopicController extends Controller
                 $query->where('parent_id', $value);
             });
         });
-        $ignoredFilterForChapterID = Topic::select('id')->where('parent_id', '!=', request()->input('filter.course_id'))->chapter()->get()->pluck('id')->toArray();
+
         $chapterIdFilter = AllowedFilter::callback('chapter_id', function ($query, $value) {
             $query->where('parent_id', $value);
-        })->ignore($ignoredFilterForChapterID);
+        })->ignore($this->getIgnoredFilterArray('filter.course_id', 'chapter'));
 
         $topics = QueryBuilder::for(Topic::class)
             ->allowedSorts(['id'])

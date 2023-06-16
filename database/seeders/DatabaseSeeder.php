@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Topic;
+use App\Models\Year;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -900,6 +901,8 @@ class DatabaseSeeder extends Seeder
         ]
     ];
 
+
+
     /**
      * Seed the application's database.
      */
@@ -912,5 +915,9 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Topic::create($this->topics);
+
+        for ($i = 2010; $i <= 2022; $i++) {
+            Year::create(['no' => $i]);
+        }
     }
 }

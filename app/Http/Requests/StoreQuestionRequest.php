@@ -27,6 +27,7 @@ class StoreQuestionRequest extends FormRequest
             'chapter_id' => 'required|exists:topics,id',
             'course_id' => 'required|exists:topics,id',
             'semester_id' => 'required|exists:topics,id',
+            'years.*' => 'nullable|exists:years,id',
         ];
     }
 }
