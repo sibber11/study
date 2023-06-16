@@ -21,14 +21,18 @@ use App\Http\Controllers\TopicController;
 |
 */
 
+//Route::get('/', function () {
+//    return Inertia::render('Welcome', [
+//        'canLogin' => Route::has('login'),
+//        'canRegister' => Route::has('register'),
+//        'laravelVersion' => Application::VERSION,
+//        'phpVersion' => PHP_VERSION,
+//    ]);
+//});
+
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+    return redirect()->route('dashboard');
+})->name('home');
 
 Route::resource('semesters', SemesterController::class)->only(['index']);
 Route::resource('courses', CourseController::class)->only(['index']);
