@@ -11,7 +11,7 @@ defineProps(['questions', 'status'])
         <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
             {{ status }}
         </div>
-        <Table :resource="questions">
+        <Table :resource="questions" :prevent-overlapping-requests="true" :input-debounce-ms="500">
 <!--            <template #cell(topic)="{item:question}">-->
 <!--                {{ question.topic.name }}-->
 <!--            </template>-->

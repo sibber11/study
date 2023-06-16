@@ -8,23 +8,17 @@ defineProps(['chapters', 'status'])
 </script>
 
 <template>
-    <ModelIndex title="Chapters" :url="route('chapter.create')">
+    <ModelIndex title="Chapters" :url="route('topics.create', {selectedType: 'chapter'})">
         <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
             {{ status }}
         </div>
-        <Table :resource="chapters">
-            <template #cell(course)="{item:chapter}">
-                {{ chapter.course.name }}
-            </template>
-            <template #cell(semester)="{item:chapter}">
-                {{ chapter.course.semester.name }}
-            </template>
+        <Table :resource="chapters" :prevent-overlapping-requests="true" :input-debounce-ms="500">
             <template #cell(actions)="{ item: chapter}">
-                <ShowButton :url="route('chapter.show', chapter)"/>
-                <EditButton :url="route('chapter.edit', chapter)"/>
-                <DeleteButton :url="route('chapter.destroy', chapter)"/>
+                <ShowButton :url="route('topics.show', chapter)"/>
+                <EditButton :url="route('topics.edit', chapter)"/>
+                <DeleteButton :url="route('topics.destroy', chapter)"/>
             </template>
          </Table>
-        
+
     </ModelIndex>
 </template>

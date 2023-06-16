@@ -6,19 +6,19 @@ import NavLink from '@/Components/NavLink.vue';
     <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
         Dashboard
     </NavLink>
-    <NavLink :href="route('semester.index')" :active="route().current('semester.*')">
+    <NavLink :href="route('semesters.index')" :active="route().current('semesters.*')">
         Semester
     </NavLink>
-    <NavLink :href="route('course.index')" :active="route().current('course.*')">
+    <NavLink :href="route('courses.index')" :active="route().current('courses.*')">
         Course
     </NavLink>
-    <NavLink :href="route('chapter.index')" :active="route().current('chapter.*')">
+    <NavLink :href="route('chapters.index')" :active="route().current('chapters.*')">
         Chapter
     </NavLink>
-    <NavLink :href="route('topic.index')" :active="route().current('topic.*')">
+    <NavLink :href="route('topics.index')" :active="route().current('topics.index')">
         Topic
     </NavLink>
-    <NavLink :href="route('question.index')" :active="route().current('question.*')">
+    <NavLink :href="route('questions.index')" :active="route().current('questions.*')">
         Question
     </NavLink>
 </template>

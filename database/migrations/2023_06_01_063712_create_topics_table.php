@@ -1,6 +1,7 @@
 <?php
 
-use App\Models\Chapter;
+
+use App\Models\Topic;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,7 +16,9 @@ return new class extends Migration
         Schema::create('topics', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreignIdFor(Chapter::class)->constrained();
+            $table->string('type');
+            $table->string('code')->nullable();
+            $table->nestedSet();
         });
     }
 

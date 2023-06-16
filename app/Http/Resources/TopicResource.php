@@ -16,7 +16,6 @@ class TopicResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-
         $attributes = [
             'id' => $this->id,
             'name' => $this->name,

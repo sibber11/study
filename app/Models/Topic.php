@@ -30,6 +30,10 @@ class Topic extends Model
         'type',
     ];
 
+    protected $attributes = [
+        'type' => self::TYPE_TOPIC,
+    ];
+
     // scopes
 
 //    protected static function booted()

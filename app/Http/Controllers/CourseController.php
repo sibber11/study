@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Course;
-use App\Http\Requests\StoreCourseRequest;
-use App\Http\Requests\UpdateCourseRequest;
+use App\Http\Resources\TopicResource;
+use App\Models\Topic;
 use Inertia\Inertia;
 use ProtoneMedia\LaravelQueryBuilderInertiaJs\InertiaTable;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class CourseController extends Controller
 {
@@ -15,60 +15,21 @@ class CourseController extends Controller
      */
     public function index()
     {
-        $courses = Course::with('semester')->paginate(10);
-
-        return Inertia::render('Model/Course/Index', ['courses'=>$courses])->table(function(InertiaTable $table){
-            $table->column('id',canBeHidden:false);
-            $table->column('name', canBeHidden:false);
-            $table->column('semester', canBeHidden:false);
+        $courses = QueryBuilder::for(Topic::class)
+            ->defaultSort('id')
+            ->allowedSorts(['id'])
+            ->course()
+            ->paginate(9)
+            ->withQueryString();
+        $courses = TopicResource::collection($courses);
+        return Inertia::render('Model/Course/Index', [
+            'courses' => $courses,
+        ])->table(function (InertiaTable $table) {
+            $table->defaultSort('id')
+                ->column('id', canBeHidden: false, sortable: true)
+                ->column('name', canBeHidden: false)
+                ->column('semester', canBeHidden: false)
+                ->column('actions', canBeHidden: false);
         });
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreCourseRequest $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Course $course)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Course $course)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateCourseRequest $request, Course $course)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Course $course)
-    {
-        //
     }
 }

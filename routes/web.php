@@ -30,11 +30,11 @@ Route::get('/', function () {
     ]);
 });
 
-Route::resource('semester', SemesterController::class);
-Route::resource('course', CourseController::class);
-Route::resource('chapter', ChapterController::class);
-Route::resource('topic', TopicController::class);
-Route::resource('question', QuestionController::class);
+Route::resource('semesters', SemesterController::class)->only(['index']);
+Route::resource('courses', CourseController::class)->only(['index']);
+Route::resource('chapters', ChapterController::class)->only(['index']);
+Route::resource('topics', TopicController::class);
+Route::resource('questions', QuestionController::class);
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -47,3 +47,7 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+Route::get('hello', function (){
+    return \App\Models\Topic::find(17)->ancestors;
+});

@@ -14,7 +14,10 @@ return new class extends Migration
     {
         Schema::create('questions', function (Blueprint $table) {
             $table->id();
-            $table->string('value');
+            $table->string('title');
+            $table->tinyInteger('difficulty')->default(0);
+            $table->tinyInteger('read_time')->default(0);
+            $table->tinyInteger('star')->default(0);
             $table->foreignIdFor(Topic::class)->constrained();
         });
     }

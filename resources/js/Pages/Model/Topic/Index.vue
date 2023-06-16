@@ -8,21 +8,12 @@
 </script>
 
 <template>
-    <ModelIndex title="Topics" :url="route('topics.create')">
+    <ModelIndex title="Topics" :url="route('topics.create', {selectedType: 'topic'})">
         <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
             {{ status }}
         </div>
-<!--        {{topics}}-->
-        <Table :resource="topics">
-<!--            <template #cell(chapter)="{item:topic}">-->
-<!--                {{ topic.chapter.name }}-->
-<!--            </template>-->
-<!--            <template #cell(course)="{item:topic}">-->
-<!--                {{ topic.chapter.course.name }}-->
-<!--            </template>-->
-<!--            <template #cell(semester)="{item:topic}">-->
-<!--                {{ topic.chapter.course.semester.name }}-->
-<!--            </template>-->
+        <Table :resource="topics" :prevent-overlapping-requests="true" :input-debounce-ms="500">
+
             <template #cell(actions)="{ item: topic}">
                 <ShowButton :url="route('topics.show', topic)"/>
                 <EditButton :url="route('topics.edit', topic)"/>

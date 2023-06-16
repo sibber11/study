@@ -7,7 +7,7 @@ import TextInput from '@/Components/TextInput.vue';
 import {useForm} from '@inertiajs/vue3';
 import {computed, onMounted} from 'vue';
 
-const props = defineProps(['semesters', 'types', 'status', 'url']);
+const props = defineProps(['semesters', 'types', 'selectedType', 'status', 'url']);
 
 const form = useForm({
     name: '',
@@ -15,7 +15,7 @@ const form = useForm({
     course_id: '',
     chapter_id: '',
     semester_id: '',
-    type: '',
+    type: props.selectedType ?? '',
 });
 
 const submit = () => {
@@ -52,14 +52,13 @@ const chapters = computed(() => {
 
 <template>
     <form @submit.prevent="submit">
-        {{form.errors}}
         <div class="mt-4">
             <InputLabel for="type" value="Type"/>
 
-            <select id="course_id" v-model="form.type"
-                    class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+            <select id="course_id" v-model="form.type" :disabled="props.selectedType"
+                    class="uppercase mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                     >
-                <option v-for="type in types" :value="type" class="uppercase">{{ type }}</option>
+                <option v-for="type in types" :value="type">{{ type }}</option>
             </select>
 
             <InputError :message="form.errors.type" class="mt-2"/>

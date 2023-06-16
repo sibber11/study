@@ -5,7 +5,7 @@
 </script>
 
 <template>
-    <ModelIndex title="Semesters">
-        <Table :resource="semesters"></Table>
+    <ModelIndex title="Semesters" :url="route('topics.create', {selectedType: 'semester'})">
+        <Table :resource="semesters" :prevent-overlapping-requests="true" :input-debounce-ms="500"></Table>
     </ModelIndex>
 </template>
