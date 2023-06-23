@@ -8,6 +8,7 @@ use Tests\TestCase;
 
 class RouteTest extends TestCase
 {
+    use RefreshDatabase;
     /**
      * semesters page can be viewed.
      */
