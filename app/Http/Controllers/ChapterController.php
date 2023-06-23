@@ -61,6 +61,7 @@ class ChapterController extends Controller
                 }),
                 $globalSearch])
             ->chapter()
+            ->with('parent')
             ->paginate(9)
             ->withQueryString();
     }

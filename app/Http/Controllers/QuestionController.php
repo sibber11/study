@@ -92,7 +92,16 @@ class QuestionController extends Controller
      */
     public function edit(Question $question)
     {
-        //
+        $semesters = Topic::with('children')->get()->toTree();
+        $years = Year::all();
+        return Inertia::render('Model/Question/Create', [
+            'model' => $question,
+            'semesters' => $semesters,
+            'years' => $years,
+            'difficulties' => Question::DIFFICULTIES,
+            'stars' => Question::MAX_STAR,
+            'status' => session('success')
+        ]);
     }
 
     /**
@@ -160,6 +169,11 @@ class QuestionController extends Controller
                         $query->where('parent_id', $value);
                     });
                 }),
+                AllowedFilter::callback('course_id', function ($query, $value) {
+                    $query->whereHas('topic.parent', function ($query) use ($value) {
+                        $query->where('parent_id', $value);
+                    });
+                }),
                 AllowedFilter::callback('year_id', function ($query, $value) {
                     $query->whereHas('years', function ($query) use ($value) {
                         $query->where('year_id', $value);
@@ -169,7 +183,8 @@ class QuestionController extends Controller
                 AllowedFilter::exact('star'),
             ])
             // eager load the topic and its ancestors
-            ->with(['topic.ancestors'])
+            ->with(['topic.parent.parent.parent', 'years'])
+            ->withCount('users')
             ->paginate(8)
             ->withQueryString();
     }

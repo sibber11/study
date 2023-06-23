@@ -19,6 +19,7 @@ class CourseController extends Controller
             ->defaultSort('id')
             ->allowedSorts(['id'])
             ->course()
+            ->with('parent')
             ->paginate(9)
             ->withQueryString();
         $courses = TopicResource::collection($courses);

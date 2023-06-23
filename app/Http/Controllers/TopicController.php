@@ -52,7 +52,7 @@ class TopicController extends Controller
                 $courseIdFilter,
             ])
             ->topic()
-            ->with('ancestors')
+            ->with('parent')
             ->paginate(8)
             ->withQueryString();
 
