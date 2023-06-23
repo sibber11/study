@@ -5,11 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreQuestionRequest;
 use App\Http\Requests\UpdateQuestionRequest;
 use App\Http\Resources\QuestionResource;
-use App\Http\Resources\TopicResource;
 use App\Models\Question;
 use App\Models\Topic;
 use App\Models\Year;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Inertia\Inertia;
 use ProtoneMedia\LaravelQueryBuilderInertiaJs\InertiaTable;
@@ -23,8 +23,7 @@ class QuestionController extends Controller
      */
     public function index()
     {
-        $questions = $this->getQuestions();
-        $questions = QuestionResource::collection($questions);
+        $questions = QuestionResource::collection($this->getQuestions());
         return Inertia::render('Model/Question/Index', [
             'questions' => $questions,
             'status' => session('success')
@@ -38,8 +37,12 @@ class QuestionController extends Controller
                 ->selectFilter('chapter_id', $chapters, 'Chapter')
                 ->selectFilter('topic_id', $topics, 'Topic')
                 ->selectFilter('year_id', $years, 'Year')
+                ->selectFilter('difficulty', Question::DIFFICULTIES, 'Difficulty')
                 ->column('id', canBeHidden: false)
                 ->column('title', canBeHidden: false)
+                ->column('difficulty')
+                ->column('read')
+                ->column('star')
                 ->column('years')
                 ->column('topic')
                 ->column('chapter')
@@ -59,6 +62,8 @@ class QuestionController extends Controller
         return Inertia::render('Model/Question/Create', [
             'semesters' => $semesters,
             'years' => $years,
+            'difficulties' => Question::DIFFICULTIES,
+            'stars' => Question::MAX_STAR,
             'status' => session('success')
         ]);
     }
@@ -104,8 +109,15 @@ class QuestionController extends Controller
     public function destroy(Question $question)
     {
         $question->years()->detach();
+        $question->users()->detach();
         $question->delete();
         return back()->with('success', 'Question deleted successfully');
+    }
+
+    public function read(Request $request, Question $question)
+    {
+        $question->read();
+        return back()->with('success', 'Question read successfully');
     }
 
     /**
@@ -116,7 +128,6 @@ class QuestionController extends Controller
         return AllowedFilter::callback('global', function ($query, $value) {
             $query->where(function ($query) use ($value) {
                 Collection::wrap($value)->each(function ($value) use ($query) {
-                    /** @var Builder $query */
                     $query
                         // look for questions with the given value in their title
                         ->orWhere('title', 'LIKE', "%{$value}%")
@@ -149,11 +160,13 @@ class QuestionController extends Controller
                         $query->where('parent_id', $value);
                     });
                 }),
-                AllowedFilter::callback('years', function ($query, $value) {
+                AllowedFilter::callback('year_id', function ($query, $value) {
                     $query->whereHas('years', function ($query) use ($value) {
-                        $query->where('id', $value);
+                        $query->where('year_id', $value);
                     });
                 }),
+                AllowedFilter::exact('difficulty'),
+                AllowedFilter::exact('star'),
             ])
             // eager load the topic and its ancestors
             ->with(['topic.ancestors'])

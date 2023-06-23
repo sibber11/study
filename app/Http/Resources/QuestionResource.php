@@ -15,17 +15,19 @@ class QuestionResource extends JsonResource
     public function toArray(Request $request): array
     {
         $chapter = $this->topic->parent;
-//        dd($this);
         $course = $chapter->parent;
         $semester = $course->parent;
         $attributes = [
             'id' => $this->id,
             'title' => $this->title,
-            'topic' => $this->topic->name,
-            'chapter' => $chapter->name,
-            'course' => $course->code,
+            'difficulty' => $this->difficulty,
+            'read' => $this->users()->count(),
+            'star' => $this->star,
+            'topic' => $this->topic->only('name', 'short_name'),
+            'chapter' => $chapter->only('name', 'short_name'),
+            'course' => $course->only('name', 'id', 'code'),
             'semester' => $semester->name,
-            'years' => $this->years->implode('no', ', '),
+            'years' => $this->years->implode('no', ' '),
         ];
         return $attributes;
     }

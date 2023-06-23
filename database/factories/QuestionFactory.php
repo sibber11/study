@@ -23,13 +23,19 @@ class QuestionFactory extends Factory
         return [
             'title' => fake()->sentence(5),
             'topic_id' => $topic->id,
+            'difficulty' => fake()->randomElement(Question::DIFFICULTIES),
+            'star' => fake()->numberBetween(0,3),
         ];
     }
 
     public function configure()
     {
         return $this->afterCreating(function (Question $question) {
-            $question->years()->attach(Year::inRandomOrder()->limit(fake()->numberBetween(0,8))->get());
+            $question->years()->attach(Year::inRandomOrder()->limit(fake()->biasedNumberBetween(0,8, function ($value) {
+                // Higher weight for smaller numbers, exponential decay
+                $weight = 1 / pow($value, 1);
+                return max($weight, 1); // Ensure weight is always positive
+            }))->get());
         });
     }
 }

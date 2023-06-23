@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 use Kalnoy\Nestedset\NodeTrait;
 
 class Topic extends Model
@@ -34,14 +36,20 @@ class Topic extends Model
         'type' => self::TYPE_TOPIC,
     ];
 
-    // scopes
+//    protected $appends = [
+//        'short_name',
+//    ];
 
-//    protected static function booted()
-//    {
-//        static::addGlobalScope('type', function (Builder $builder) {
-//            $builder->where('type', self::TYPE_TOPIC);
-//        });
-//    }
+    protected function shortName(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value, array $attributes) => Str::limit($attributes['name'], 10),
+        );
+    }
+    public function questions()
+    {
+        return $this->hasMany(Question::class);
+    }
 
     public function scopeTopic(Builder $query)
     {

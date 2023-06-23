@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Topic;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('questions', function (Blueprint $table) {
+        Schema::create('read_user', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->tinyInteger('difficulty')->default(0);
-            $table->tinyInteger('star')->default(0);
-            $table->foreignIdFor(Topic::class)->constrained();
+            $table->foreignIdFor(\App\Models\User::class)->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(\App\Models\Question::class)->constrained()->cascadeOnDelete();
+            $table->timestamps();
         });
     }
 
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('questions');
+        Schema::dropIfExists('read_user');
     }
 };

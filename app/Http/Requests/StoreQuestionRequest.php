@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Question;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreQuestionRequest extends FormRequest
@@ -28,6 +29,8 @@ class StoreQuestionRequest extends FormRequest
             'course_id' => 'required|exists:topics,id',
             'semester_id' => 'required|exists:topics,id',
             'years.*' => 'nullable|exists:years,id',
+            'difficulty' => 'nullable|in:'.implode(',', Question::DIFFICULTIES),
+            'star' => 'nullable|integer|min:0|max:'.Question::MAX_STAR,
         ];
     }
 }

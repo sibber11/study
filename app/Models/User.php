@@ -42,4 +42,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function questionReads()
+    {
+        return $this->belongsToMany(Question::class, 'read_user')->withTimestamps();
+    }
 }
