@@ -42,7 +42,7 @@ class TopicController extends Controller
 
         $chapterIdFilter = AllowedFilter::callback('chapter_id', function ($query, $value) {
             $query->where('parent_id', $value);
-        })->ignore($this->getIgnoredFilterArray('filter.course_id', 'chapter'));
+        })->ignore($this->getIgnoredFilterArray('course_id', 'chapter'));
 
         $topics = QueryBuilder::for(Topic::class)
             ->allowedSorts(['id'])

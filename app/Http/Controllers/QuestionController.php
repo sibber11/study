@@ -163,17 +163,20 @@ class QuestionController extends Controller
                 'title',
                 $this->getGlobalSearchFilter(),
                 // filter by topic id
-                AllowedFilter::exact('topic_id'),
+                AllowedFilter::exact('topic_id')->ignore($this->getIgnoredFilterArray('topic_id', 'chapter')),
+
                 AllowedFilter::callback('chapter_id', function ($query, $value) {
                     $query->whereHas('topic', function ($query) use ($value) {
                         $query->where('parent_id', $value);
                     });
-                }),
+                })->ignore($this->getIgnoredFilterArray('chapter_id', 'course')),
+
                 AllowedFilter::callback('course_id', function ($query, $value) {
                     $query->whereHas('topic.parent', function ($query) use ($value) {
                         $query->where('parent_id', $value);
                     });
-                }),
+                })->ignore($this->getIgnoredFilterArray('course_id', 'semester')),
+
                 AllowedFilter::callback('year_id', function ($query, $value) {
                     $query->whereHas('years', function ($query) use ($value) {
                         $query->where('year_id', $value);

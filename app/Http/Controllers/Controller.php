@@ -11,10 +11,10 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
 
-    protected function getIgnoredFilterArray(string $input, string $scope): array
+    protected function getIgnoredFilterArray(string $parent_id, string $scope): array
     {
         return Topic::select('id')
-            ->where('parent_id', '!=', request()->input($input))
+            ->where('parent_id', '!=', request()->input('filter.'.$parent_id))
             ->$scope()
             ->get()
             ->pluck('id')

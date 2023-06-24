@@ -53,7 +53,7 @@ class ChapterController extends Controller
         return QueryBuilder::for(Topic::class)
             ->allowedSorts(['id'])
             ->allowedFilters([
-                AllowedFilter::exact('course_id', 'parent_id')->ignore($this->getIgnoredFilterArray('filter.semester_id', 'course')),
+                AllowedFilter::exact('course_id', 'parent_id')->ignore($this->getIgnoredFilterArray('semester_id', 'course')),
                 AllowedFilter::callback('semester_id', function (Builder $query, $value) {
                     $query->whereHas('parent', function (Builder $query) use ($value) {
                         $query->where('parent_id', $value);
