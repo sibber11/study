@@ -77,9 +77,10 @@ class TopicController extends Controller
             'selectedType' => 'nullable|in:'. implode(',', Topic::TYPES),
         ]);
         $selectedType = request()->input('selectedType');
-        $courses = Topic::whereNot('type', Topic::TYPE_TOPIC)->get()->toTree();
+        $semesters = Topic::whereNot('type', Topic::TYPE_TOPIC)->get()->toTree();
+//        dd($semesters->toArray());
         return Inertia::render('Model/Topic/Create', [
-            'courses' => $courses,
+            'semesters' => $semesters,
             'types' => Topic::TYPES,
             'selectedType' => $selectedType,
             'status' => session('status'),
@@ -127,7 +128,29 @@ class TopicController extends Controller
      */
     public function edit(Topic $topic)
     {
-        //
+        switch ($topic->type){
+            case Topic::TYPE_TOPIC:
+                $topic->chapter_id = $topic->parent_id;
+                $topic->course_id = $topic->parent->parent_id;
+                $topic->semester_id = $topic->parent->parent->parent_id;
+                break;
+            case Topic::TYPE_CHAPTER:
+                $topic->course_id = $topic->parent_id;
+                $topic->semester_id = $topic->parent->parent_id;
+                break;
+            case Topic::TYPE_COURSE:
+                $topic->semester_id = $topic->parent_id;
+                break;
+        }
+        $selectedType = $topic->type;
+        $courses = Topic::whereNot('type', Topic::TYPE_TOPIC)->get()->toTree();
+        return Inertia::render('Model/Topic/Edit', [
+            'semesters' => $courses,
+            'types' => Topic::TYPES,
+            'selectedType' => $selectedType,
+            'status' => session('status'),
+            'model' => $topic
+        ]);
     }
 
     /**
@@ -135,7 +158,8 @@ class TopicController extends Controller
      */
     public function update(UpdateTopicRequest $request, Topic $topic)
     {
-        //
+        $topic->update($request->validated());
+        return back()->with('status', 'Topic updated.');
     }
 
     /**

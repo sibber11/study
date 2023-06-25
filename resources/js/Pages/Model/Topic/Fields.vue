@@ -7,11 +7,10 @@ import TextInput from '@/Components/TextInput.vue';
 import {useForm} from '@inertiajs/vue3';
 import {computed, onMounted} from 'vue';
 
-const props = defineProps(['semesters', 'types', 'selectedType', 'status', 'url']);
+const props = defineProps(['semesters', 'types', 'selectedType', 'status', 'url', 'model']);
 
 const form = useForm({
     name: '',
-    topic_id: '',
     course_id: '',
     chapter_id: '',
     semester_id: '',
@@ -19,26 +18,34 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.post(props.url, {
-        // onFinish: () => form.reset(),
-    });
+    if (props.model) {
+        form.patch(props.url, {
+            // onFinish: () => form.reset(),
+            preserveScroll: true,
+        });
+    } else {
+        form.post(props.url, {
+            preserveScroll: true,
+            // onFinish: () => form.reset(),
+        });
+    }
 };
 
 onMounted(() => {
-    // if (!props.courses) {
-    //     form.name = props.chapter.name;
-    //     form.course_id = props.chapter.course_id;
-    //     form.chapter_id = props.chapter.chapter_id;
-    // }
+    if (props.model) {
+        form.name = props.model.name;
+        form.semester_id = props.model.semester_id;
+        form.course_id = props.model.course_id;
+        form.chapter_id = props.model.chapter_id;
+        form.type = props.model.type;
+    }
 });
 
 const courses = computed(() => {
     if (form.semester_id === '') {
         return [];
     }
-    let courses = props.semesters.find(semester => semester.id === form.semester_id).children;
-    console.log(courses);
-    return courses;
+    return props.semesters.find(semester => semester.id === form.semester_id).children;
 });
 
 const chapters = computed(() => {
@@ -73,7 +80,7 @@ const chapters = computed(() => {
         <div class="mt-4" v-if="form.type && form.type !== 'semester'">
             <InputLabel for="semester_id" value="Semester"/>
 
-            <select id="semester_id" v-model="form.semester_id"
+            <select id="semester_id" v-model="form.semester_id" @input="form.course_id=''"
                     class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
                     >
                 <option v-for="semester in semesters" :value="semester.id" class="">{{ semester.name }}</option>
@@ -85,7 +92,7 @@ const chapters = computed(() => {
         <div class="mt-4" v-if="form.type === 'topic' || form.type === 'chapter'">
             <InputLabel for="course_id" value="Course"/>
 
-            <select id="type" v-model="form.course_id"
+            <select id="type" v-model="form.course_id" :disabled="!form.semester_id" @input="form.chapter_id=''"
                     class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
             >
                 <option v-for="course in courses" :value="course.id" class="">{{ course.name }}</option>

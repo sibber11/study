@@ -6,7 +6,7 @@ const props = defineProps(['semesters', 'status', 'years', 'difficulties', 'star
 </script>
 
 <template>
-    <CreateLayout title="Create Question">
+    <CreateLayout title="Update Question">
         <Fields v-bind="$props" :url="route('questions.update', model.id)"/>
     </CreateLayout>
 </template>
