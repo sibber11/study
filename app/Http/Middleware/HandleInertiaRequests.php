@@ -39,6 +39,7 @@ class HandleInertiaRequests extends Middleware
                     'location' => $request->url(),
                 ]);
             },
+            'course_id' => session()->get('course_id'),
         ]);
     }
 }

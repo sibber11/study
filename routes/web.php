@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ChapterController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\CourseSelectorController;
 use App\Http\Controllers\DashboardController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
@@ -40,6 +41,8 @@ Route::resource('courses', CourseController::class)->only(['index']);
 Route::resource('chapters', ChapterController::class)->only(['index']);
 Route::resource('topics', TopicController::class);
 Route::resource('questions', QuestionController::class);
+
+Route::post('change_course', CourseSelectorController::class)->name('change_course');
 
 Route::post('questions/{question}/read', [QuestionController::class, 'read'])->name('questions.read');
 

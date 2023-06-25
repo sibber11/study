@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Kalnoy\Nestedset\NodeTrait;
+use Kalnoy\Nestedset\QueryBuilder;
 
 class Topic extends Model
 {
@@ -69,5 +70,26 @@ class Topic extends Model
     public function scopeSemester(Builder $query)
     {
         return $query->where('type', self::TYPE_SEMESTER);
+    }
+
+    public function scopeUserSemester(QueryBuilder $query)
+    {
+        // todo: get semester id from user table
+        return $query->whereDescendantOf(1);
+    }
+
+    public function scopeChapterOfSelectedCourse(QueryBuilder $query)
+    {
+        return $query->when(session('course_id'), fn($query, $courseId) => $query->whereDescendantOf($courseId));
+    }
+
+    public function scopeCourseOfSelectedSemester(Builder $query)
+    {
+        return $query->course()->userSemester();
+    }
+
+    public function scopeTopicOfSelectedCourse(QueryBuilder $query)
+    {
+        return $query->topic()->when(session('course_id'), fn($query, $courseId) => $query->whereDescendantOf($courseId));
     }
 }

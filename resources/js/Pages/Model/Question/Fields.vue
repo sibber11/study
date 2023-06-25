@@ -5,9 +5,9 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import CancelButton from '@/Components/CancelButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import {useForm} from '@inertiajs/vue3';
-import {computed} from 'vue';
+import {computed, onMounted} from 'vue';
 
-const props = defineProps(['semesters', 'status', 'years', 'difficulties', 'stars', 'url',]);
+const props = defineProps(['semesters', 'status', 'years', 'difficulties', 'stars', 'url', 'model']);
 
 const form = useForm({
     title: '',
@@ -21,16 +21,31 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.post(props.url, {
-        // onFinish: () => form.reset(),
-    });
+    if (props.model) {
+        form.patch(props.url, {
+            // onFinish: () => form.reset(),
+            preserveScroll: true,
+        });
+    } else {
+        form.post(props.url, {
+            preserveScroll: true,
+            // onFinish: () => form.reset(),
+        });
+    }
 };
 
-// onMounted(() => {
-//     if (!props.question) {
-//         //
-//     }
-// });
+onMounted(() => {
+    if (props.model) {
+        form.title = props.model.title;
+        form.years = props.model.years_array;
+        form.star = props.model.star;
+        form.difficulty = props.model.difficulty;
+        form.semester_id = props.model.semester_id;
+        form.course_id = props.model.course_id;
+        form.chapter_id = props.model.chapter_id;
+        form.topic_id = props.model.topic_id;
+    }
+});
 
 const courses = computed(() => {
     if (form.semester_id === '') {
@@ -68,8 +83,9 @@ const topics = computed(() => {
         <div class="mt-4">
             <InputLabel for="semester_id" value="Semester"/>
 
-            <select id="semester_id" v-model="form.semester_id" disabled
+            <select id="semester_id" v-model="form.semester_id"
                     class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                    disabled
                     @input="form.chapter_id=''">
                 <option v-for="semester in semesters" :value="semester.id" class="">{{ semester.name }}</option>
             </select>
@@ -142,7 +158,7 @@ const topics = computed(() => {
             <select id="star_id" v-model="form.star"
                     class="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
                 <option value="0">Select Importance</option>
-                <option v-for="star in stars" :value="star" class="">{{ star }}</option>
+                <option v-for="star in stars" :value="star" class="">{{ '⭐'.repeat(star) }}</option>
             </select>
 
             <InputError :message="form.errors.chapter_id" class="mt-2"/>

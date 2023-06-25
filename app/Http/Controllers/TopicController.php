@@ -34,38 +34,29 @@ class TopicController extends Controller
                 });
             });
         });
-        $courseIdFilter = AllowedFilter::callback('course_id', function ($query, $value) {
-            $query->whereHas('parent', function ($query) use ($value) {
-                $query->where('parent_id', $value);
-            });
-        });
-
         $chapterIdFilter = AllowedFilter::callback('chapter_id', function ($query, $value) {
             $query->where('parent_id', $value);
-        })->ignore($this->getIgnoredFilterArray('course_id', 'chapter'));
+        });
 
         $topics = QueryBuilder::for(Topic::class)
             ->allowedSorts(['id'])
             ->allowedFilters([
                 $globalSearch,
                 $chapterIdFilter,
-                $courseIdFilter,
             ])
-            ->topic()
+            ->topicOfSelectedCourse()
             ->with('parent')
             ->paginate(8)
             ->withQueryString();
 
         $topics = TopicResource::collection($topics);
 
-//        throw new \Exception('stop');
         return Inertia::render('Model/Topic/Index', [
             'topics' => $topics,
+            'courses' => Topic::courseOfSelectedSemester()->get()->pluck('name', 'id')->toArray(),
         ])->table(function (InertiaTable $table) {
-            $courses = Topic::course()->get()->pluck('name', 'id')->toArray();
-            $chapters = Topic::chapter()->whereParentId(request()->input('filter.course_id'))->get()->pluck('name', 'id')->toArray();
+            $chapters = Topic::chapterOfSelectedCourse()->get()->pluck('name', 'id')->toArray();
             $table
-                ->selectFilter('course_id', $courses, 'Course')
                 ->selectFilter('chapter_id', $chapters, 'Chapter')
                 ->column('id', canBeHidden: false, sortable: true)
                 ->column('name', canBeHidden: false)
@@ -83,7 +74,7 @@ class TopicController extends Controller
     public function create(Request $request)
     {
         $request->validate([
-            'selectedType' => 'nullable|in:course,chapter,topic,semester',
+            'selectedType' => 'nullable|in:'. implode(',', Topic::TYPES),
         ]);
         $selectedType = request()->input('selectedType');
         $courses = Topic::whereNot('type', Topic::TYPE_TOPIC)->get()->toTree();
@@ -102,22 +93,13 @@ class TopicController extends Controller
     {
         $type = $request->input('type');
 
-        switch ($type) {
-            case Topic::TYPE_TOPIC:
-                $parent = Topic::chapter()->whereId($request->input('chapter_id'))->first();
-                break;
-            case Topic::TYPE_CHAPTER:
-                $parent = Topic::course()->whereId($request->input('course_id'))->first();
-                break;
-            case Topic::TYPE_COURSE:
-                $parent = Topic::semester()->whereId($request->input('semester_id'))->first();
-                break;
-            case Topic::TYPE_SEMESTER:
-                $parent = null;
-                break;
-            default:
-                $parent = null;
-        }
+        $parent = match ($type) {
+            Topic::TYPE_TOPIC => Topic::chapter()->whereId($request->input('chapter_id'))->first(),
+            Topic::TYPE_CHAPTER => Topic::course()->whereId($request->input('course_id'))->first(),
+            Topic::TYPE_COURSE => Topic::semester()->whereId($request->input('semester_id'))->first(),
+            Topic::TYPE_SEMESTER => null,
+            default => null,
+        };
         $topic = Topic::create($request->validated());
         if (!is_null($parent)) {
             $parent->appendNode($topic);

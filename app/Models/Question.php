@@ -19,7 +19,7 @@ class Question extends Model
 
     const IMPORTANT = 5;
     const MAX_DIFFICULTY = 2;
-    const MAX_STAR = 3;
+    const MAX_STAR = 5;
 
     protected $fillable = [
         'title',
@@ -33,6 +33,17 @@ class Question extends Model
         'star' => 'integer',
     ];
 
+    protected static function boot()
+    {
+        // potential bug here may occur when trying to load the question for editing purpose
+        parent::boot();
+        static::addGlobalScope('course', function ($builder) {
+            $builder->whereHas('topic.parent', function ($builder) {
+                if (session()->has('course_id'))
+                    $builder->where('parent_id', session('course_id'));
+            });
+        });
+    }
     public function topic()
     {
         return $this->belongsTo(Topic::class);
