@@ -47,4 +47,14 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Question::class, 'read_user')->withTimestamps();
     }
+
+    public function semester()
+    {
+        return $this->belongsTo(Topic::class)->where('type', 'semester');
+    }
+
+    public function isAdmin()
+    {
+        return $this->is_admin;
+    }
 }

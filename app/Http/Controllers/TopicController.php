@@ -45,6 +45,7 @@ class TopicController extends Controller
                 $chapterIdFilter,
             ])
             ->topicOfSelectedCourse()
+            ->userSemester()
             ->with('parent')
             ->paginate(8)
             ->withQueryString();

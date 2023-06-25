@@ -18,7 +18,7 @@ class CourseController extends Controller
         $courses = QueryBuilder::for(Topic::class)
             ->defaultSort('id')
             ->allowedSorts(['id'])
-            ->course()
+            ->courseOfSelectedSemester()
             ->with('parent')
             ->paginate(9)
             ->withQueryString();

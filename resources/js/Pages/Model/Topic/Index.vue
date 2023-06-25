@@ -19,7 +19,7 @@
 <template>
     <ModelIndex title="Topics" :url="route('topics.create', {selectedType: 'topic'})">
         <template #filter>
-            <Filter :courses="courses"/>
+            <Filter :models="courses" :model_id="$page.props.course_id" route_name="change_course"/>
         </template>
         <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
             {{ status }}

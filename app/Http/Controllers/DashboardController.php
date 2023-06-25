@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Question;
+use App\Models\Topic;
 use App\Models\User;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -66,7 +67,8 @@ class DashboardController extends Controller
                     'name' => 'Completed Questions',
                     'count' => $completed_questions
                 ],
-            ]
+            ],
+            'semesters' => Topic::semester()->get()->pluck('name', 'id')->toArray(),
         ]);
     }
 }

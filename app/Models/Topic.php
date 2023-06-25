@@ -74,18 +74,25 @@ class Topic extends Model
 
     public function scopeUserSemester(QueryBuilder $query)
     {
-        // todo: get semester id from user table
-        return $query->whereDescendantOf(1);
+        if (auth()->check()){
+            return $query->whereDescendantOf(auth()->user()->semester_id);
+        }
+        return $query->when(session('semester_id'), fn($query, $courseId) => $query->whereDescendantOf($courseId));
     }
 
     public function scopeChapterOfSelectedCourse(QueryBuilder $query)
     {
-        return $query->when(session('course_id'), fn($query, $courseId) => $query->whereDescendantOf($courseId));
+        return $query->chapter()->when(session('course_id'), fn($query, $courseId) => $query->whereDescendantOf($courseId));
     }
 
     public function scopeCourseOfSelectedSemester(Builder $query)
     {
         return $query->course()->userSemester();
+    }
+
+    public function scopeChapterOfSelectedSemester(Builder $query)
+    {
+        return $query->chapter()->userSemester();
     }
 
     public function scopeTopicOfSelectedCourse(QueryBuilder $query)

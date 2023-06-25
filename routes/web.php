@@ -4,6 +4,7 @@ use App\Http\Controllers\ChapterController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CourseSelectorController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SemesterSelectorController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
@@ -33,18 +34,23 @@ use App\Http\Controllers\TopicController;
 //});
 
 Route::get('/', function () {
-    return redirect()->route('dashboard');
+    return redirect()->route('questions.index');
 })->name('home');
 
-Route::resource('semesters', SemesterController::class)->only(['index']);
-Route::resource('courses', CourseController::class)->only(['index']);
-Route::resource('chapters', ChapterController::class)->only(['index']);
-Route::resource('topics', TopicController::class);
-Route::resource('questions', QuestionController::class);
-
+Route::resource('questions', QuestionController::class)->only(['index']);
 Route::post('change_course', CourseSelectorController::class)->name('change_course');
+Route::post('change_semester', SemesterSelectorController::class)->name('change_semester');
 
-Route::post('questions/{question}/read', [QuestionController::class, 'read'])->name('questions.read');
+
+Route::middleware('auth')->group(function () {
+    Route::resource('semesters', SemesterController::class)->only(['index']);
+    Route::resource('courses', CourseController::class)->only(['index']);
+    Route::resource('chapters', ChapterController::class)->only(['index']);
+    Route::resource('topics', TopicController::class);
+    Route::resource('questions', QuestionController::class)->except(['index']);
+
+    Route::post('questions/{question}/read', [QuestionController::class, 'read'])->name('questions.read');
+});
 
 Route::get('/dashboard', DashboardController::class)->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -55,7 +61,3 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
-
-Route::get('hello', function (){
-    return \App\Models\Topic::find(17)->ancestors;
-});

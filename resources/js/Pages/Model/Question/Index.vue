@@ -24,7 +24,7 @@ function getClass(difficulty){
     <ModelIndex title="Question" :url="route('questions.create')">
         <template #filter>
             <div class="flex justify-between">
-                <Filter :courses="courses"/>
+                <Filter :models="courses" :model_id="$page.props.course_id" route_name="change_course"/>
                 <!--            info button that can be viwed by clicking on it-->
                 <Dropdown>
                     <template #trigger>
