@@ -12,11 +12,11 @@ class CourseSelectorController extends Controller
      */
     public function __invoke(Request $request): RedirectResponse
     {
-        if ($request->has('course_id')) {
+        if ($request->has('model_id')) {
             $request->validate([
-                'course_id' => 'exists:topics,id',
+                'model_id' => 'exists:topics,id',
             ]);
-            session()->put('course_id', $request->get('course_id'));
+            session()->put('course_id', $request->get('model_id'));
         }
         return redirect(url()->previousPath());
     }
