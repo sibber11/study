@@ -5,14 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Question;
 use App\Models\User;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class DashboardController extends Controller
 {
-    public function __invoke()
+    public function __invoke(): Response
     {
-
+        $question_query = Question::query()->withoutGlobalScope('course');
         // fetch the questions count where star is maximum
-        $important_questions = Question::whereStar(Question::MAX_STAR)->count();
+        $important_questions = Question::withoutGlobalScope('course')->whereStar(Question::MAX_STAR)->count();
 //        $unimportant_questions = Question::whereStar(0)->count();
 
         // fetch the questions count where the year count is greater than the threshold
@@ -21,23 +22,23 @@ class DashboardController extends Controller
 //                ->havingRaw('COUNT(*) >= ?', [Question::IMPORTANT]);
 //        })->count();
 
-        $common_questions = Question::leftJoin('question_year', 'questions.id', '=', 'question_year.question_id')
+        $common_questions = Question::withoutGlobalScope('course')->leftJoin('question_year', 'questions.id', '=', 'question_year.question_id')
             ->groupBy('questions.id')
             ->havingRaw('COUNT(*) >= ?', [Question::IMPORTANT])
             ->count();
 
         // fetch the questions count where the year count is less than the threshold
-        $uncommon_questions = Question::leftJoin('question_year', 'questions.id', '=', 'question_year.question_id')
+        $uncommon_questions = Question::withoutGlobalScope('course')->leftJoin('question_year', 'questions.id', '=', 'question_year.question_id')
             ->groupBy('questions.id')
             ->havingRaw('COUNT(*) <= ?', [1])
             ->count();
 
         // fetch the questions count where the difficulty is maximum
-        $difficult_questions = Question::whereDifficulty(Question::MAX_DIFFICULTY)->count();
+        $difficult_questions = Question::withoutGlobalScope('course')->whereDifficulty(Question::MAX_DIFFICULTY)->count();
 
         /** @var User $user */
         $user = auth()->user();
-        $completed_questions = $user->questionReads()->distinct('question_id')->count();
+        $completed_questions = $user->questionReads()->withoutGlobalScope('course')->distinct('question_id')->count();
 
         return Inertia::render('Dashboard', [
             'questions_count' => [
