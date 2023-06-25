@@ -40,11 +40,13 @@ class QuestionController extends Controller
                 ->selectFilter('difficulty', Question::DIFFICULTIES, 'Difficulty')
                 ->column('id', canBeHidden: false)
                 ->column('title', canBeHidden: false)
-                ->column('read', label: '✔️')
                 ->column('topic')
                 ->column('chapter')
-                ->column('actions', canBeHidden: false)
                 ->withGlobalSearch();
+            if (auth()->check() && auth()->user()?->isAdmin()) {
+                $table->column('read', label: '✔️')
+                    ->column('actions', canBeHidden: false);
+            }
         });
     }
 

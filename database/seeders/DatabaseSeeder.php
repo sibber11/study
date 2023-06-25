@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Topic;
+use App\Models\User;
 use App\Models\Year;
 use Illuminate\Database\Seeder;
 
@@ -902,21 +903,34 @@ class DatabaseSeeder extends Seeder
     ];
 
 
-
     /**
      * Seed the application's database.
      */
     public function run(): void
     {
 
-        \App\Models\User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'Test@example.com',
-        ]);
+        $this->seedYears();
+
+        // start a timer to track how long it takes to seed the database
+        $start = microtime(true);
 
         Topic::create($this->topics);
 
-        for ($i = 2010; $i <= 2022; $i++) {
+        User::factory()->create([
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'semester_id' => Topic::semester()->first()->id,
+            'is_admin' => true,
+        ]);
+        // stop the timer and display the time elapsed
+        $time_elapsed_secs = microtime(true) - $start;
+
+        echo "Time elapsed: $time_elapsed_secs seconds\n";
+    }
+
+    public function seedYears(int $start = 2010, int $end = 2022): void
+    {
+        for ($i = $start; $i <= $end; $i++) {
             Year::create(['no' => $i]);
         }
     }
