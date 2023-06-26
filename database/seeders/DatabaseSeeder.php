@@ -7,6 +7,8 @@ use App\Models\Topic;
 use App\Models\User;
 use App\Models\Year;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -915,12 +917,14 @@ class DatabaseSeeder extends Seeder
         $start = microtime(true);
 
         Topic::create($this->topics);
-
-        User::factory()->create([
+        User::create([
             'name' => 'Test User',
             'email' => 'test@example.com',
             'semester_id' => Topic::semester()->first()->id,
             'is_admin' => true,
+            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+            'remember_token' => Str::random(10),
+            'email_verified_at' => now(),
         ]);
         // stop the timer and display the time elapsed
         $time_elapsed_secs = microtime(true) - $start;
