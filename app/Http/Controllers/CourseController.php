@@ -20,7 +20,7 @@ class CourseController extends Controller
             ->allowedSorts(['id'])
             ->courseOfSelectedSemester()
             ->with('parent')
-            ->paginate(9)
+            ->paginate()
             ->withQueryString();
         $courses = TopicResource::collection($courses);
         return Inertia::render('Model/Course/Index', [

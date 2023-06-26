@@ -62,7 +62,7 @@ class ChapterController extends Controller
                 $globalSearch])
             ->chapterOfSelectedSemester()
             ->with('parent')
-            ->paginate(9)
+            ->paginate()
             ->withQueryString();
     }
 }

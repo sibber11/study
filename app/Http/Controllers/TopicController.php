@@ -47,7 +47,7 @@ class TopicController extends Controller
             ->topicOfSelectedCourse()
             ->userSemester()
             ->with('parent')
-            ->paginate(8)
+            ->paginate()
             ->withQueryString();
 
         $topics = TopicResource::collection($topics);

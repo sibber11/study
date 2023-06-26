@@ -25,11 +25,15 @@ class QuestionController extends Controller
     public function index()
     {
         $questions = QuestionResource::collection($this->getQuestions());
-        return Inertia::render('Model/Question/Index', [
+        $props = [
             'questions' => $questions,
             'courses' => Topic::courseOfSelectedSemester()->get()->pluck('name', 'id')->toArray(),
-            'status' => session('success')
-        ])->table(function (InertiaTable $table) {
+            'status' => session('success'),
+        ];
+        if (!auth()->check()){
+            $props['semesters'] = Topic::semester()->get()->pluck('name', 'id')->toArray();
+        }
+        return Inertia::render('Model/Question/Index', $props)->table(function (InertiaTable $table) {
             $topics = Topic::topic()->whereParentId(request()->input('filter.chapter_id'))->get()->pluck('name', 'id')->toArray();
             $chapters = Topic::chapterOfSelectedCourse()->get()->pluck('name', 'id')->toArray();
             $years = Year::all()->pluck('no', 'id')->toArray();
@@ -178,7 +182,7 @@ class QuestionController extends Controller
             // eager load the topic and its ancestors
             ->with(['topic.parent.parent.parent', 'years'])
             ->withCount('users')
-            ->paginate(6)
+            ->paginate()
             ->withQueryString();
     }
 

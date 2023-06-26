@@ -19,7 +19,7 @@ class SemesterController extends Controller
             ->defaultSort('id')
             ->allowedSorts(['id'])
             ->semester()
-            ->paginate(9)
+            ->paginate()
             ->withQueryString();
 
         $semesters = TopicResource::collection($semesters);
