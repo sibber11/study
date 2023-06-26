@@ -20,7 +20,7 @@ let props = defineProps(['questions_count', 'semesters'])
         <div class="py-6">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="pb-6">
-                    <Filter route_name="change_semester" :model_id="$page.props.semester_id" :models="semesters"/>
+                    <Filter label="Semester" route_name="change_semester" :model_id="$page.props.semester_id" :models="semesters"/>
                 </div>
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                     <div

@@ -7,7 +7,7 @@ import ReadButton from "@/Components/ReadButton.vue";
 import Filter from "@/Components/Filter.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
-defineProps(['questions', 'status', 'courses'])
+defineProps(['questions', 'status', 'courses', 'semesters'])
 function getStar(number) {
     return '⭐'.repeat(number)
 }
@@ -24,7 +24,8 @@ function getClass(difficulty){
     <ModelIndex title="Question" :url="route('questions.create')">
         <template #filter>
             <div class="flex justify-between">
-                <Filter :models="courses" :model_id="$page.props.course_id" route_name="change_course"/>
+                <Filter label="Course" :models="courses" :model_id="$page.props.course_id" route_name="change_course"/>
+                <Filter label="Semester" v-if="!$page.props.auth.user" :models="semesters" :model_id="$page.props.semester_id" route_name="change_semester"/>
                 <!--            info button that can be viwed by clicking on it-->
                 <Dropdown>
                     <template #trigger>
