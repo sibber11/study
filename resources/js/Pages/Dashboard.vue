@@ -16,11 +16,13 @@ let props = defineProps(['questions_count', 'semesters'])
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Dashboard</h2>
         </template>
 
-
         <div class="py-6">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="pb-6">
                     <Filter label="Semester" route_name="change_semester" :model_id="$page.props.semester_id" :models="semesters"/>
+                </div>
+                <div class="text-red-500 p-4 bg-gray-800 mb-2 rounded border-red-500 border" v-if="$page.props.flash.error">
+                    {{$page.props.flash.error}}
                 </div>
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                     <div
