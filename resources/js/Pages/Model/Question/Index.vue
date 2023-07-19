@@ -53,21 +53,21 @@ function getClass(difficulty){
                     <small>{{question.years}}</small>
                 </div>
             </template>
-            <template #cell(topic)="{item: question}">
-                <div :title="question.topic.name">
-                    {{question.topic.short_name}}
-                </div>
-            </template>
-            <template #cell(chapter)="{item: question}">
-                <div :title="question.chapter.name">
-                    {{question.chapter.short_name}}
-                </div>
-            </template>
-<!--            <template #cell(course)="{item: question}">-->
-<!--                <div :title="question.course.name">-->
-<!--                    {{question.course.name}}-->
+<!--            <template #cell(topic)="{item: question}">-->
+<!--                <div :title="question.topic.name">-->
+<!--                    {{question.topic.short_name}}-->
 <!--                </div>-->
 <!--            </template>-->
+            <template #cell(chapter)="{item: question}">
+                <div :title="question.chapter.name" class="whitespace-normal">
+                    {{question.chapter.name}}
+                </div>
+            </template>
+            <template #cell(course)="{item: question}" class="whitespace-normal">
+                <div :title="question.course.name">
+                    {{question.course.name}}
+                </div>
+            </template>
             <template #cell(actions)="{ item: question}">
                 <ReadButton :url="route('questions.read', question)"/>
                 <EditButton :url="route('questions.edit', question)"/>

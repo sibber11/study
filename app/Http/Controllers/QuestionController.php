@@ -44,8 +44,9 @@ class QuestionController extends Controller
                 ->selectFilter('difficulty', Question::DIFFICULTIES, 'Difficulty')
                 ->column('id', canBeHidden: false)
                 ->column('title', canBeHidden: false)
-                ->column('topic')
+//                ->column('topic')
                 ->column('chapter')
+                ->column('course')
                 ->withGlobalSearch();
             if (auth()->check() && auth()->user()?->isAdmin()) {
                 $table->column('read', label: '✔️')
