@@ -22,7 +22,7 @@ defineProps(['title', 'url']);
                 <div class="py-6">
                     <slot name="filter"></slot>
                 </div>
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="bg-white shadow-sm sm:rounded-lg">
                     <div class="p-6 bg-white border-b border-gray-200">
                         <h3 class="text-2xl text-center">Datatables</h3>
                         <slot></slot>
@@ -35,11 +35,18 @@ defineProps(['title', 'url']);
         <template #header>
             <div class="flex justify-between">
                 <h2 class="dark:text-gray-400">{{ title }}</h2>
-                <Link v-if="url" :href="url">
-                    <PrimaryButton>
-                        Create
-                    </PrimaryButton>
-                </Link>
+                <div class="flex gap-4">
+                    <Link v-if="url" :href="url">
+                        <PrimaryButton>
+                            Create
+                        </PrimaryButton>
+                    </Link>
+                    <Link v-if="url" :href="route('multiple-question.create')">
+                        <PrimaryButton>
+                            Create Multiple
+                        </PrimaryButton>
+                    </Link>
+                </div>
             </div>
         </template>
 
@@ -48,7 +55,7 @@ defineProps(['title', 'url']);
                 <div class="py-6">
                     <slot name="filter"></slot>
                 </div>
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="bg-white shadow-sm sm:rounded-lg">
                     <div class="p-6 bg-white border-b border-gray-200">
                         <h3 class="text-2xl text-center">Datatables</h3>
                         <slot></slot>
