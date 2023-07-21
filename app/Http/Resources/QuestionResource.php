@@ -16,7 +16,17 @@ class QuestionResource extends JsonResource
     public function toArray(Request $request): array
     {
         /** @var Question $this */
-        $chapter = $this->topic->parent;
+//        switch ($this->topic->type) {
+//            case Topic::TYPE_TOPIC:
+//                $chapter = $this->topic->parent;
+//                break;
+//            case Topic::TYPE_CHAPTER:
+//                $chapter = $this->topic;
+//                break;
+//            default:
+//                $chapter = $this->topic;
+//        }
+        $chapter = $this->topic;
         $course = $chapter->parent;
         $semester = $course->parent;
         $attributes = [
@@ -25,7 +35,7 @@ class QuestionResource extends JsonResource
             'difficulty' => $this->difficulty,
             'read' => $this->users_count,
             'star' => $this->star,
-            'topic' => $this->topic->only('name', 'short_name'),
+//            'topic' => $this->topic->only('name', 'short_name'),
             'chapter' => $chapter->only('name', 'short_name'),
             'course' => $course->only('name', 'id', 'code'),
             'semester' => $semester->name,

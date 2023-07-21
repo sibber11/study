@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Question;
 use App\Models\Topic;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -11,6 +12,18 @@ use Tests\TestCase;
 class RouteTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->actingAs(User::factory()->create());
+        Topic::factory()->create([
+            'name' => 'semester',
+            'type' => Topic::TYPE_SEMESTER,
+        ]);
+        session()->put(['semester' => 1]);
+    }
+
     /**
      * semesters page can be viewed.
      */

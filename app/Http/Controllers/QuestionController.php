@@ -34,18 +34,19 @@ class QuestionController extends Controller
             $props['semesters'] = Topic::semester()->get()->pluck('name', 'id')->toArray();
         }
         return Inertia::render('Model/Question/Index', $props)->table(function (InertiaTable $table) {
-            $topics = Topic::topic()->whereParentId(request()->input('filter.chapter_id'))->get()->pluck('name', 'id')->toArray();
+//            $topics = Topic::topic()->whereParentId(request()->input('filter.chapter_id'))->get()->pluck('name', 'id')->toArray();
             $chapters = Topic::chapterOfSelectedCourse()->get()->pluck('name', 'id')->toArray();
             $years = Year::all()->pluck('no', 'id')->toArray();
             $table
                 ->selectFilter('chapter_id', $chapters, 'Chapter')
-                ->selectFilter('topic_id', $topics, 'Topic')
+//                ->selectFilter('topic_id', $topics, 'Topic')
                 ->selectFilter('year_id', $years, 'Year')
                 ->selectFilter('difficulty', Question::DIFFICULTIES, 'Difficulty')
                 ->column('id', canBeHidden: false)
                 ->column('title', canBeHidden: false)
-                ->column('topic')
+//                ->column('topic')
                 ->column('chapter')
+                ->column('course')
                 ->withGlobalSearch();
             if (auth()->check() && auth()->user()?->isAdmin()) {
                 $table->column('read', label: '✔️')
@@ -180,7 +181,7 @@ class QuestionController extends Controller
                 AllowedFilter::exact('star'),
             ])
             // eager load the topic and its ancestors
-            ->with(['topic.parent.parent.parent', 'years'])
+            ->with(['topic.parent.parent', 'years'])
             ->withCount('users')
             ->paginate()
             ->withQueryString();

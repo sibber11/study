@@ -48,7 +48,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('chapters', ChapterController::class)->only(['index']);
     Route::resource('topics', TopicController::class);
     Route::resource('questions', QuestionController::class)->except(['index']);
-
+    Route::resource('multiple-question', \App\Http\Controllers\MultipleQuestionController::class);
     Route::post('questions/{question}/read', [QuestionController::class, 'read'])->name('questions.read');
 });
 

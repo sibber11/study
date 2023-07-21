@@ -38,10 +38,17 @@ class Question extends Model
         // potential bug here may occur when trying to load the question for editing purpose
         parent::boot();
         static::addGlobalScope('course', function ($builder) {
-            $builder->whereHas('topic.parent', function ($builder) {
+            $builder->whereHas('topic', function ($builder) {
                 if (session()->has('course_id'))
                     $builder->where('parent_id', session('course_id'));
             });
+        });
+
+        static::creating(function (Question $model){
+            $model->star--;
+            if ($model->star > static::MAX_STAR){
+                $model->star = static::MAX_STAR;
+            }
         });
     }
     public function topic()

@@ -41,6 +41,9 @@ class HandleInertiaRequests extends Middleware
             },
             'course_id' => session()->get('course_id'),
             'semester_id' => session()->get('semester_id'),
+            'flash' => [
+                'error' => session('error'),
+            ]
         ]);
     }
 }

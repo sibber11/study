@@ -74,7 +74,7 @@ class Topic extends Model
 
     public function scopeUserSemester(QueryBuilder $query)
     {
-        if (auth()->check()){
+        if (auth()->check() && auth()->user()->semester_id != null){
             return $query->whereDescendantOf(auth()->user()->semester_id);
         }
         return $query->when(session('semester_id'), fn($query, $courseId) => $query->whereDescendantOf($courseId));
