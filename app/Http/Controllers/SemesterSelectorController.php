@@ -24,7 +24,7 @@ class SemesterSelectorController extends Controller
             $user = auth()->user();
             $user->semester()->associate($semester);
             $user->save();
-            return redirect()->route('dashboard');
+//            return redirect()->route('dashboard');
         }
         return redirect()->route('questions.index');
     }

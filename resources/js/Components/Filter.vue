@@ -8,7 +8,7 @@ const props = defineProps({
         },
         model_id: {
             type: String,
-            required: true
+            required: false
         },
         route_name: {
             type: String,

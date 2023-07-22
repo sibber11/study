@@ -28,7 +28,8 @@ function getClass(difficulty) {
         <template #filter>
             <div class="flex justify-between">
                 <Filter :model_id="$page.props.course_id" :models="courses" label="Course" route_name="change_course"/>
-                <Filter v-if="!$page.props.auth.user" :model_id="$page.props.semester_id" :models="semesters"
+                {{semesters}}
+                <Filter :model_id="$page.props.semester_id" :models="semesters"
                         label="Semester" route_name="change_semester"/>
                 <!--            info button that can be viwed by clicking on it-->
                 <!--                <Dropdown>-->

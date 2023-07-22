@@ -51,14 +51,14 @@ class ChapterController extends Controller
     public function getChaptersUsingQueryBuilder(AllowedFilter $globalSearch): mixed
     {
         return QueryBuilder::for(Topic::class)
-            ->allowedSorts(['id'])
+            ->allowedSorts(['id', 'name'])
             ->allowedFilters([
-                AllowedFilter::exact('course_id', 'parent_id')->ignore($this->getIgnoredFilterArray('semester_id', 'course')),
-                AllowedFilter::callback('semester_id', function (Builder $query, $value) {
-                    $query->whereHas('parent', function (Builder $query) use ($value) {
-                        $query->where('parent_id', $value);
-                    });
-                }),
+                AllowedFilter::exact('course_id', 'parent_id'),
+//                AllowedFilter::callback('semester_id', function (Builder $query, $value) {
+//                    $query->whereHas('parent', function (Builder $query) use ($value) {
+//                        $query->where('parent_id', $value);
+//                    });
+//                }),
                 $globalSearch])
             ->chapterOfSelectedSemester()
             ->with('parent')

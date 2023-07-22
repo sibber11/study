@@ -24,15 +24,16 @@ class QuestionController extends Controller
      */
     public function index()
     {
+        if (auth()->check() && auth()->user()->semester_id == null){
+            return to_route('dashboard')->with('error','Please select a semester to continue.');
+        }
         $questions = QuestionResource::collection($this->getQuestions());
         $props = [
             'questions' => $questions,
+            'semesters' => Topic::semester()->get()->pluck('name', 'id')->toArray(),
             'courses' => Topic::courseOfSelectedSemester()->get()->pluck('name', 'id')->toArray(),
             'status' => session('success'),
         ];
-        if (!auth()->check()){
-            $props['semesters'] = Topic::semester()->get()->pluck('name', 'id')->toArray();
-        }
         return Inertia::render('Model/Question/Index', $props)->table(function (InertiaTable $table) {
 //            $topics = Topic::topic()->whereParentId(request()->input('filter.chapter_id'))->get()->pluck('name', 'id')->toArray();
             $chapters = Topic::chapterOfSelectedCourse()->get()->pluck('name', 'id')->toArray();
@@ -163,13 +164,8 @@ class QuestionController extends Controller
             ->allowedFilters([
                 'title',
                 $this->getGlobalSearchFilter(),
-                // filter by topic id
-                AllowedFilter::exact('topic_id')->ignore($this->getIgnoredFilterArray('topic_id', 'chapter')),
-
                 AllowedFilter::callback('chapter_id', function ($query, $value) {
-                    $query->whereHas('topic', function ($query) use ($value) {
-                        $query->where('parent_id', $value);
-                    });
+                    $query->where('topic_id', $value);
                 })->ignore($this->getIgnoredFilterArray('chapter_id', 'course')),
 
                 AllowedFilter::callback('year_id', function ($query, $value) {

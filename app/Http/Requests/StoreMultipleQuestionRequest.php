@@ -34,24 +34,22 @@ class StoreMultipleQuestionRequest extends FormRequest
 
     public function getFormattedData(): array
     {
-//        $unformatted = str_replace($this->input('questions'),"\n(","(");
-//        $array = explode("\n", $unformatted);
-        $array = explode("\n", $this->input('questions'));
-
+        $data = preg_replace("/Or,?/m", "1.", $this->input('questions'));
+        $data = preg_replace("/\n(\D)/m",' ${1}',$data);
+        $data = preg_replace("/^\d+[.)] /m", '', $data);
+        $array = explode("\n", $data);
         $formatted = [];
         $counter = 0;
         foreach ($array as $item) {
             if (empty($item)) {
                 continue;
             }
-            $item = preg_replace("/^\d+(\.|\)) /m", '', $item);
-            preg_match("/\(\d.+\)$/m", $item, $year);
+            $item = str_replace('][',',',$item);
+            preg_match("/[(\[]\d.+[)\]]$/m", $item, $year);
             $years = preg_match_all("/\d{4}|\d{2}/m", $item, $matches);
             $item = str_replace($year, '', $item);
             $item = trim($item);
-            if(str_starts_with($item, "Or")){
-                $item = str_replace("Or, ", "", $item);
-            }
+
             if (!str_ends_with($item, '?') && !str_ends_with($item, '.')){
                 $item = $item . '.';
             }
