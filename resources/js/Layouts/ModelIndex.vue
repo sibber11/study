@@ -4,7 +4,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import UnAuthenticatedLayout from "@/Layouts/UnAuthenticatedLayout.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 
-defineProps(['title', 'url']);
+defineProps(['title', 'url', 'url2']);
 </script>
 
 <template>
@@ -14,6 +14,9 @@ defineProps(['title', 'url']);
         <template #header>
             <div class="flex justify-between">
                 <h2 class="dark:text-gray-400">{{ title }}</h2>
+                <div class="flex gap-4">
+                    <slot name="links"></slot>
+                </div>
             </div>
         </template>
 
@@ -41,11 +44,12 @@ defineProps(['title', 'url']);
                             Create
                         </PrimaryButton>
                     </Link>
-                    <Link v-if="url" :href="route('multiple-question.create')">
+                    <Link v-if="url2" :href="url2">
                         <PrimaryButton>
                             Create Multiple
                         </PrimaryButton>
                     </Link>
+                    <slot name="links"></slot>
                 </div>
             </div>
         </template>

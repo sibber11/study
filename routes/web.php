@@ -38,6 +38,7 @@ Route::get('/', function () {
 })->name('home');
 
 Route::resource('questions', QuestionController::class)->only(['index']);
+Route::resource('random-questions', \App\Http\Controllers\RandomQuestionController::class)->only(['index']);
 Route::post('change_course', CourseSelectorController::class)->name('change_course');
 Route::post('change_semester', SemesterSelectorController::class)->name('change_semester');
 
@@ -48,7 +49,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('chapters', ChapterController::class)->only(['index']);
     Route::resource('topics', TopicController::class);
     Route::resource('questions', QuestionController::class)->except(['index']);
-    Route::resource('multiple-question', \App\Http\Controllers\MultipleQuestionController::class);
+    Route::resource('multiple-question', \App\Http\Controllers\MultipleQuestionController::class)->only(['create','store']);
     Route::post('questions/{question}/read', [QuestionController::class, 'read'])->name('questions.read');
 });
 

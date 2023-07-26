@@ -1,10 +1,10 @@
 <script setup>
 import ModelIndex from '@/Layouts/ModelIndex.vue';
 import {Table} from '@protonemedia/inertiajs-tables-laravel-query-builder';
-import EditButton from "@/Components/EditButton.vue";
-import DeleteButton from "@/Components/DeleteButton.vue";
+import {router} from "@inertiajs/vue3";
 import ReadButton from "@/Components/ReadButton.vue";
 import Filter from "@/Components/Filter.vue";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
 
 defineProps(['questions', 'status', 'courses', 'semesters'])
 
@@ -21,29 +21,23 @@ function getClass(difficulty) {
         return 'text-red-500'
     }
 }
+
+function reload() {
+    router.reload({ only: [`questions`] })
+}
 </script>
 
 <template>
-    <ModelIndex :url="route('questions.create')" :url2="route('multiple-question.create')" title="Question">
+    <ModelIndex title="Question">
         <template #filter>
             <div class="flex justify-between">
                 <Filter :model_id="$page.props.course_id" :models="courses" label="Course" route_name="change_course"/>
                 <Filter :model_id="$page.props.semester_id" :models="semesters"
                         label="Semester" route_name="change_semester"/>
-                <!--            info button that can be viwed by clicking on it-->
-                <!--                <Dropdown>-->
-                <!--                    <template #trigger>-->
-                <!--                        <PrimaryButton>i</PrimaryButton>-->
-                <!--                    </template>-->
-                <!--                    <template #content>-->
-                <!--                        <div class="p-4">-->
-                <!--                            <p class="text-sm text-gray-700 dark:text-white">-->
-                <!--                                <strong>Easy</strong> questions are those that can be solved in less than 10 minutes.-->
-                <!--                            </p>-->
-                <!--                        </div>-->
-                <!--                    </template>-->
-                <!--                </Dropdown>-->
             </div>
+        </template>
+        <template #links>
+            <PrimaryButton @click="reload">Randomize</PrimaryButton>
         </template>
         <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
             {{ status }}
@@ -57,11 +51,7 @@ function getClass(difficulty) {
                     <small>{{ question.years }}</small>
                 </div>
             </template>
-            <!--            <template #cell(topic)="{item: question}">-->
-            <!--                <div :title="question.topic.name">-->
-            <!--                    {{question.topic.short_name}}-->
-            <!--                </div>-->
-            <!--            </template>-->
+
             <template #cell(chapter)="{item: question}">
                 <div :title="question.chapter.name" class="whitespace-normal">
                     {{ question.chapter.name }}
@@ -74,8 +64,20 @@ function getClass(difficulty) {
             </template>
             <template #cell(actions)="{ item: question}">
                 <ReadButton :url="route('questions.read', question)"/>
-                <EditButton :url="route('questions.edit', question)"/>
-                <DeleteButton :url="route('questions.destroy', question)"/>
+            </template>
+            <template v-slot:pagination="slotProps">
+                <div class="m-4">
+                    <div class="flex flex-row space-x-4 items-center flex-grow">
+                        <select @change="router.visit(route(route().current()), { data: {
+                            perPage: $event.target.value
+                        } })"
+                        class="block focus:ring-indigo-500 focus:border-indigo-500 min-w-max shadow-sm text-sm border-gray-300 rounded-md"
+                        name="per_page">
+                        <option v-for="per_page in slotProps.perPageOptions" :value="per_page" :selected="slotProps.meta.per_page === per_page">{{ per_page }} per page
+                        </option>
+                    </select>
+                    </div>
+                </div>
             </template>
         </Table>
     </ModelIndex>

@@ -19,13 +19,11 @@ class SemesterSelectorController extends Controller
         $request->session()->put('semester_id', $semester);
         $request->session()->forget('course_id');
         if (auth()->check()){
-
             /** @var User $user */
             $user = auth()->user();
             $user->semester()->associate($semester);
             $user->save();
-//            return redirect()->route('dashboard');
         }
-        return redirect()->route('questions.index');
+        return back()->with('success', 'Semester selected successfully.');
     }
 }

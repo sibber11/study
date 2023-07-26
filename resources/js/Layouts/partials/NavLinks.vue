@@ -21,4 +21,7 @@ import NavLink from '@/Components/NavLink.vue';
     <NavLink :href="route('questions.index')" :active="route().current('questions.*')">
         Question
     </NavLink>
+    <NavLink :href="route('random-questions.index')" :active="route().current('random-questions.*')">
+        Random Question
+    </NavLink>
 </template>
